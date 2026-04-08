@@ -209,10 +209,10 @@ export default function TransaksiMasuk() {
                   <span className="text-blue-200">Waktu Masuk</span>
                   <span>{formatDate(result.waktu_masuk)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-200">Petugas</span>
-                  <span>{result.user?.name}</span>
-                </div>
+                 <div className="flex justify-between">
+                   <span className="text-blue-200">Petugas</span>
+                   <span>{result.user?.nama_lengkap || result.user?.name}</span>
+                 </div>
               </div>
 
               <button onClick={handlePrint} className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
@@ -236,7 +236,7 @@ export default function TransaksiMasuk() {
               <div className="row"><span>Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
               <div className="row"><span>Area</span><span>{result.area_parkir?.nama_area}</span></div>
               <div className="row"><span>Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
-              <div className="row"><span>Petugas</span><span>{result.user?.name}</span></div>
+               <div className="row"><span>Petugas</span><span>{result.user?.nama_lengkap || result.user?.name}</span></div>
               <div className="line"></div>
               <div className="center">
                 <p>Simpan kartu ini dengan baik</p>

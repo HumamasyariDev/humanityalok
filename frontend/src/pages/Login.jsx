@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import toast from 'react-hot-toast'
-import { FiMail, FiLock, FiLogIn } from 'react-icons/fi'
+import { FiUser, FiLock, FiLogIn } from 'react-icons/fi'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
@@ -15,11 +15,11 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      await login(email, password)
+      await login(username, password)
       toast.success('Login berhasil!')
       navigate('/')
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Email atau password salah')
+      toast.error(err.response?.data?.message || 'Username atau password salah')
     } finally {
       setLoading(false)
     }
@@ -38,39 +38,39 @@ export default function Login() {
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Masuk ke Akun Anda</h2>
-          
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="label-field">Email</label>
-              <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="email@parkir.com"
-                  required
-                />
-              </div>
-            </div>
+         <div className="bg-white rounded-2xl shadow-2xl p-8">
+           <h2 className="text-xl font-bold text-gray-800 mb-6">Masuk ke Akun Anda</h2>
+           
+           <form onSubmit={handleSubmit} className="space-y-5">
+             <div>
+               <label className="label-field">Username</label>
+               <div className="relative">
+                 <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                 <input
+                   type="text"
+                   value={username}
+                   onChange={(e) => setUsername(e.target.value)}
+                   className="input-field pl-10"
+                   placeholder="admin"
+                   required
+                 />
+               </div>
+             </div>
 
-            <div>
-              <label className="label-field">Password</label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="Masukkan password"
-                  required
-                />
-              </div>
-            </div>
+             <div>
+               <label className="label-field">Password</label>
+               <div className="relative">
+                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                 <input
+                   type="password"
+                   value={password}
+                   onChange={(e) => setPassword(e.target.value)}
+                   className="input-field pl-10"
+                   placeholder="Masukkan password"
+                   required
+                 />
+               </div>
+             </div>
 
             <button
               type="submit"
@@ -88,24 +88,24 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Demo Accounts */}
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-3 font-medium">AKUN DEMO:</p>
-            <div className="space-y-2 text-xs text-gray-600">
-              <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
-                <span className="font-medium">Admin</span>
-                <span>admin@parkir.com / password</span>
-              </div>
-              <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
-                <span className="font-medium">Petugas</span>
-                <span>petugas@parkir.com / password</span>
-              </div>
-              <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
-                <span className="font-medium">Owner</span>
-                <span>owner@parkir.com / password</span>
-              </div>
-            </div>
-          </div>
+           {/* Demo Accounts */}
+           <div className="mt-6 pt-6 border-t border-gray-200">
+             <p className="text-xs text-gray-500 mb-3 font-medium">AKUN DEMO:</p>
+             <div className="space-y-2 text-xs text-gray-600">
+               <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
+                 <span className="font-medium">Admin</span>
+                 <span>admin / password</span>
+               </div>
+               <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
+                 <span className="font-medium">Petugas</span>
+                 <span>petugas / password</span>
+               </div>
+               <div className="flex justify-between bg-gray-50 p-2 rounded-lg">
+                 <span className="font-medium">Owner</span>
+                 <span>owner / password</span>
+               </div>
+             </div>
+           </div>
         </div>
       </div>
     </div>

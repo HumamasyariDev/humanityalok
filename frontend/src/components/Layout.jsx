@@ -93,23 +93,23 @@ export default function Layout() {
               <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                 <FiUser className="text-white" size={16} />
               </div>
-              {sidebarOpen && (
-                <div className="text-left">
-                  <p className="text-sm font-medium text-gray-800">{user?.name}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${roleColors[user?.role]}`}>
-                    {user?.role?.toUpperCase()}
-                  </span>
-                </div>
-              )}
+               {sidebarOpen && (
+                 <div className="text-left">
+                   <p className="text-sm font-medium text-gray-800">{user?.nama_lengkap || user?.name}</p>
+                   <span className={`text-xs px-2 py-0.5 rounded-full ${roleColors[user?.role]}`}>
+                     {user?.role?.toUpperCase()}
+                   </span>
+                 </div>
+               )}
               <FiChevronDown size={16} className="text-gray-400" />
             </button>
 
             {userMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
-                </div>
+               <div className="px-4 py-2 border-b border-gray-100">
+                   <p className="text-sm font-medium">{user?.nama_lengkap || user?.name}</p>
+                   <p className="text-xs text-gray-500">{user?.username || user?.email}</p>
+                 </div>
                 <button
                   onClick={handleLogout}
                   className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"

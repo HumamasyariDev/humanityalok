@@ -40,7 +40,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-        <p className="text-gray-500 mt-1">Selamat datang, {user?.name}!</p>
+        <p className="text-gray-500 mt-1">Selamat datang, {user?.nama_lengkap || user?.name}!</p>
       </div>
 
       {/* Stats Cards */}

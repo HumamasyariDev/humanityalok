@@ -93,7 +93,7 @@ export default function LogAktivitas() {
                       {new Date(log.created_at).toLocaleString('id-ID')}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm font-medium">{log.user?.name || '-'}</td>
+                   <td className="px-4 py-3 text-sm font-medium">{log.user?.nama_lengkap || log.user?.name || '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${aksiColors[log.aksi] || 'bg-gray-100 text-gray-700'}`}>
                       {log.aksi}

@@ -9,7 +9,7 @@ export default function Users() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'petugas' })
+  const [form, setForm] = useState({ nama_lengkap: '', username: '', password: '', role: 'petugas', status_aktif: true })
   const [pagination, setPagination] = useState({})
 
   useEffect(() => { fetchUsers() }, [])
@@ -33,13 +33,13 @@ export default function Users() {
 
   const openCreate = () => {
     setEditing(null)
-    setForm({ name: '', email: '', password: '', role: 'petugas' })
+    setForm({ nama_lengkap: '', username: '', password: '', role: 'petugas', status_aktif: true })
     setShowModal(true)
   }
 
   const openEdit = (user) => {
     setEditing(user)
-    setForm({ name: user.name, email: user.email, password: '', role: user.role })
+    setForm({ nama_lengkap: user.nama_lengkap, username: user.username, password: '', role: user.role, status_aktif: user.status_aktif })
     setShowModal(true)
   }
 
@@ -63,7 +63,7 @@ export default function Users() {
   }
 
   const handleDelete = async (user) => {
-    if (!confirm(`Hapus user "${user.name}"?`)) return
+    if (!confirm(`Hapus user "${user.nama_lengkap}"?`)) return
     try {
       await api.delete(`/users/${user.id}`)
       toast.success('User berhasil dihapus')
@@ -95,45 +95,45 @@ export default function Users() {
         </button>
       </div>
 
-      {/* Search */}
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama atau email..."
-            className="input-field pl-10"
-          />
-        </div>
-        <button type="submit" className="btn-primary">Cari</button>
-      </form>
+       {/* Search */}
+       <form onSubmit={handleSearch} className="flex gap-2">
+         <div className="relative flex-1 max-w-md">
+           <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+           <input
+             type="text"
+             value={search}
+             onChange={(e) => setSearch(e.target.value)}
+             placeholder="Cari nama atau username..."
+             className="input-field pl-10"
+           />
+         </div>
+         <button type="submit" className="btn-primary">Cari</button>
+       </form>
 
       {/* Table */}
       <div className="card p-0">
         <div className="table-container">
           <table className="w-full">
-            <thead>
-              <tr className="table-header">
-                <th className="px-4 py-3">No</th>
-                <th className="px-4 py-3">Nama</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Role</th>
-                <th className="px-4 py-3">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {users.map((user, i) => (
-                <tr key={user.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm">{(pagination.current_page - 1) * 10 + i + 1}</td>
-                  <td className="px-4 py-3 text-sm font-medium">{user.name}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{user.email}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${roleColors[user.role]}`}>
-                      {user.role.toUpperCase()}
-                    </span>
-                  </td>
+             <thead>
+               <tr className="table-header">
+                 <th className="px-4 py-3">No</th>
+                 <th className="px-4 py-3">Nama Lengkap</th>
+                 <th className="px-4 py-3">Username</th>
+                 <th className="px-4 py-3">Role</th>
+                 <th className="px-4 py-3">Aksi</th>
+               </tr>
+             </thead>
+             <tbody className="divide-y divide-gray-100">
+               {users.map((user, i) => (
+                 <tr key={user.id} className="hover:bg-gray-50">
+                   <td className="px-4 py-3 text-sm">{(pagination.current_page - 1) * 10 + i + 1}</td>
+                   <td className="px-4 py-3 text-sm font-medium">{user.nama_lengkap}</td>
+                   <td className="px-4 py-3 text-sm text-gray-600">{user.username}</td>
+                   <td className="px-4 py-3">
+                     <span className={`text-xs px-2 py-1 rounded-full font-medium ${roleColors[user.role]}`}>
+                       {user.role.toUpperCase()}
+                     </span>
+                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <button onClick={() => openEdit(user)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"><FiEdit2 size={16} /></button>
@@ -177,31 +177,38 @@ export default function Users() {
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-lg"><FiX size={20} /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="label-field">Nama</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} className="input-field" required />
-              </div>
-              <div>
-                <label className="label-field">Email</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className="input-field" required />
-              </div>
-              <div>
-                <label className="label-field">Password {editing && '(kosongkan jika tidak diubah)'}</label>
-                <input type="password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} className="input-field" {...(!editing && { required: true })} />
-              </div>
-              <div>
-                <label className="label-field">Role</label>
-                <select value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} className="input-field">
-                  <option value="admin">Admin</option>
-                  <option value="petugas">Petugas</option>
-                  <option value="owner">Owner</option>
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="btn-secondary flex-1 justify-center">Batal</button>
-                <button type="submit" className="btn-primary flex-1 justify-center">Simpan</button>
-              </div>
-            </form>
+               <div>
+                 <label className="label-field">Nama Lengkap</label>
+                 <input type="text" value={form.nama_lengkap} onChange={(e) => setForm({...form, nama_lengkap: e.target.value})} className="input-field" required />
+               </div>
+               <div>
+                 <label className="label-field">Username</label>
+                 <input type="text" value={form.username} onChange={(e) => setForm({...form, username: e.target.value})} className="input-field" required />
+               </div>
+               <div>
+                 <label className="label-field">Password {editing && '(kosongkan jika tidak diubah)'}</label>
+                 <input type="password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} className="input-field" {...(!editing && { required: true })} />
+               </div>
+               <div>
+                 <label className="label-field">Role</label>
+                 <select value={form.role} onChange={(e) => setForm({...form, role: e.target.value})} className="input-field">
+                   <option value="admin">Admin</option>
+                   <option value="petugas">Petugas</option>
+                   <option value="owner">Owner</option>
+                 </select>
+               </div>
+               <div>
+                 <label className="label-field">Status Aktif</label>
+                 <select value={form.status_aktif ? '1' : '0'} onChange={(e) => setForm({...form, status_aktif: e.target.value === '1'})} className="input-field">
+                   <option value="1">Aktif</option>
+                   <option value="0">Tidak Aktif</option>
+                 </select>
+               </div>
+               <div className="flex gap-3 pt-2">
+                 <button type="button" onClick={() => setShowModal(false)} className="btn-secondary flex-1 justify-center">Batal</button>
+                 <button type="submit" className="btn-primary flex-1 justify-center">Simpan</button>
+               </div>
+             </form>
           </div>
         </div>
       )}
