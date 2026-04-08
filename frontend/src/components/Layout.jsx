@@ -8,7 +8,7 @@ import {
 } from 'react-icons/fi'
 
 export default function Layout() {
-  const { user, logout } = useAuth()
+  const { user, logout, hasRole } = useAuth()
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -33,55 +33,47 @@ export default function Layout() {
 
   const filteredMenu = menuItems.filter(item => item.roles.some(r => user?.role === r))
 
-  const roleConfig = {
-    admin: { bg: 'bg-red-100', text: 'text-red-700', badge: '👤 Admin' },
-    petugas: { bg: 'bg-blue-100', text: 'text-blue-700', badge: '🚗 Petugas' },
-    owner: { bg: 'bg-emerald-100', text: 'text-emerald-700', badge: '📊 Owner' },
+  const roleColors = {
+    admin: 'bg-red-100 text-red-700',
+    petugas: 'bg-blue-100 text-blue-700',
+    owner: 'bg-emerald-100 text-emerald-700',
   }
 
-  const role = roleConfig[user?.role] || roleConfig.admin
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 flex">
+    <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 min-h-screen transition-all duration-300 flex flex-col fixed z-30 shadow-lg`}>
+      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 min-h-screen transition-all duration-300 flex flex-col fixed z-30`}>
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           {sidebarOpen && (
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">P</span>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">P</span>
               </div>
-              <div>
-                <p className="font-bold text-gray-900">SmartPark</p>
-                <p className="text-xs text-gray-600 font-medium">Parkir Terintegrasi</p>
-              </div>
+              <span className="font-bold text-gray-800">SmartPark</span>
             </div>
           )}
-          <button 
-            onClick={() => setSidebarOpen(!sidebarOpen)} 
-            className="p-2 hover:bg-gray-100 rounded-lg text-gray-600 transition-colors"
-          >
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500">
             {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
           {filteredMenu.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.to === '/'}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all duration-200 ${
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg scale-105'
-                    : 'text-gray-700 hover:bg-gray-100/80'
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`
               }
             >
-              <item.icon size={20} />
+              <item.icon size={20} className="flex-shrink-0" />
               {sidebarOpen && <span>{item.label}</span>}
             </NavLink>
           ))}
@@ -89,41 +81,40 @@ export default function Layout() {
       </aside>
 
       {/* Main Content */}
-      <div className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300 flex flex-col`}>
+      <div className={`flex-1 ${sidebarOpen ? 'ml-64' : 'ml-20'} transition-all duration-300`}>
         {/* Top Bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-20 shadow-sm">
-          <h2 className="text-2xl font-bold text-gray-900">Smart Parking System</h2>
-          
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-20">
+          <h2 className="text-lg font-semibold text-gray-800">Smart Parking System</h2>
           <div className="relative">
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-3 px-4 py-2 rounded-xl hover:bg-gray-100 transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
-                <FiUser className="text-white text-lg" />
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                <FiUser className="text-white" size={16} />
               </div>
-              {sidebarOpen && (
-                <div className="text-left">
-                  <p className="text-sm font-bold text-gray-900">{user?.nama_lengkap || user?.name}</p>
-                  <span className={`text-xs px-2 py-1 rounded-full font-semibold ${role.bg} ${role.text} inline-block`}>
-                    {role.badge}
-                  </span>
-                </div>
-              )}
-              <FiChevronDown size={18} className="text-gray-600" />
+               {sidebarOpen && (
+                 <div className="text-left">
+                   <p className="text-sm font-medium text-gray-800">{user?.nama_lengkap || user?.name}</p>
+                   <span className={`text-xs px-2 py-0.5 rounded-full ${roleColors[user?.role]}`}>
+                     {user?.role?.toUpperCase()}
+                   </span>
+                 </div>
+               )}
+              <FiChevronDown size={16} className="text-gray-400" />
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50 animate-in">
-                <div className="px-5 py-3 border-b border-gray-100">
-                  <p className="text-sm font-bold text-gray-900">{user?.nama_lengkap || user?.name}</p>
-                  <p className="text-xs text-gray-600 font-medium mt-1">{user?.username || user?.email}</p>
-                </div>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 py-2 z-50">
+               <div className="px-4 py-2 border-b border-gray-100">
+                   <p className="text-sm font-medium">{user?.nama_lengkap || user?.name}</p>
+                   <p className="text-xs text-gray-500">{user?.username || user?.email}</p>
+                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-5 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 font-semibold transition-colors duration-200 group"
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                 >
-                  <FiLogOut size={18} className="group-hover:scale-110 transition-transform" />
+                  <FiLogOut size={16} />
                   Logout
                 </button>
               </div>
@@ -132,7 +123,7 @@ export default function Layout() {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="p-6">
           <Outlet />
         </main>
       </div>
@@ -144,4 +135,3 @@ export default function Layout() {
     </div>
   )
 }
-
