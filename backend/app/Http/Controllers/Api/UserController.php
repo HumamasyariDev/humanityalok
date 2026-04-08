@@ -17,8 +17,8 @@ class UserController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                  ->orWhere('username', 'like', "%{$search}%");
             });
         }
 
@@ -26,7 +26,7 @@ class UserController extends Controller
             $query->where('role', $request->role);
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate($request->get('per_page', 10));
+        $users = $query->orderBy('id_user', 'desc')->paginate($request->get('per_page', 10));
 
         return response()->json([
             'success' => true,
@@ -37,25 +37,24 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'nama_lengkap' => 'required|string|max:50',
+            'username' => 'required|string|max:50|unique:tb_user',
             'password' => 'required|string|min:6',
             'role' => 'required|in:admin,petugas,owner',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'nama_lengkap' => $request->nama_lengkap,
+            'username' => $request->username,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'status_aktif' => 1,
         ]);
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'CREATE',
-            'modul' => 'User',
-            'keterangan' => "Menambah user: {$user->name}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "CREATE User: {$user->nama_lengkap}",
+            'waktu_aktivitas' => now(),
         ]);
 
         return response()->json([
@@ -76,14 +75,14 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'nama_lengkap' => 'required|string|max:50',
+            'username' => 'required|string|max:50|unique:tb_user,username,' . $user->id_user . ',id_user',
             'role' => 'required|in:admin,petugas,owner',
         ]);
 
         $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
+            'nama_lengkap' => $request->nama_lengkap,
+            'username' => $request->username,
             'role' => $request->role,
         ]);
 
@@ -92,11 +91,9 @@ class UserController extends Controller
         }
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'UPDATE',
-            'modul' => 'User',
-            'keterangan' => "Mengupdate user: {$user->name}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "UPDATE User: {$user->nama_lengkap}",
+            'waktu_aktivitas' => now(),
         ]);
 
         return response()->json([
@@ -108,15 +105,13 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user)
     {
-        $name = $user->name;
+        $nama = $user->nama_lengkap;
         $user->delete();
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'DELETE',
-            'modul' => 'User',
-            'keterangan' => "Menghapus user: {$name}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "DELETE User: {$nama}",
+            'waktu_aktivitas' => now(),
         ]);
 
         return response()->json([

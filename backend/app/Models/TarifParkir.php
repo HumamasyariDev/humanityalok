@@ -9,17 +9,17 @@ class TarifParkir extends Model
 {
     use HasFactory;
 
-    protected $table = 'tarif_parkirs';
+    protected $table = 'tb_tarif';
+    protected $primaryKey = 'id_tarif';
+    public $timestamps = false;
 
     protected $fillable = [
         'jenis_kendaraan',
         'tarif_per_jam',
-        'tarif_flat',
-        'denda_per_jam',
     ];
 
     public function transaksis()
     {
-        return $this->hasMany(Transaksi::class, 'tarif_parkir_id');
+        return $this->hasMany(Transaksi::class, 'id_tarif', 'id_tarif');
     }
 }

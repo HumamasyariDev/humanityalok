@@ -16,12 +16,11 @@ class AreaParkirController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('kode_area', 'like', "%{$search}%")
-                  ->orWhere('nama_area', 'like', "%{$search}%");
+                $q->where('nama_area', 'like', "%{$search}%");
             });
         }
 
-        $areas = $query->orderBy('created_at', 'desc')->paginate($request->get('per_page', 10));
+        $areas = $query->orderBy('id_area', 'desc')->paginate($request->get('per_page', 10));
 
         return response()->json([
             'success' => true,
@@ -33,29 +32,24 @@ class AreaParkirController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => AreaParkir::where('status', 'aktif')->get(),
+            'data' => AreaParkir::all(),
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'kode_area' => 'required|string|unique:area_parkirs',
             'nama_area' => 'required|string|max:255',
             'kapasitas' => 'required|integer|min:1',
-            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         $area = AreaParkir::create($request->only([
-            'kode_area', 'nama_area', 'kapasitas', 'status'
+            'nama_area', 'kapasitas'
         ]));
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'CREATE',
-            'modul' => 'Area Parkir',
-            'keterangan' => "Menambah area: {$area->nama_area}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "CREATE: Menambah area - {$area->nama_area}",
         ]);
 
         return response()->json([
@@ -76,22 +70,17 @@ class AreaParkirController extends Controller
     public function update(Request $request, AreaParkir $areaParkir)
     {
         $request->validate([
-            'kode_area' => 'required|string|unique:area_parkirs,kode_area,' . $areaParkir->id,
             'nama_area' => 'required|string|max:255',
             'kapasitas' => 'required|integer|min:1',
-            'status' => 'required|in:aktif,nonaktif',
         ]);
 
         $areaParkir->update($request->only([
-            'kode_area', 'nama_area', 'kapasitas', 'status'
+            'nama_area', 'kapasitas'
         ]));
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'UPDATE',
-            'modul' => 'Area Parkir',
-            'keterangan' => "Mengupdate area: {$areaParkir->nama_area}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "UPDATE: Mengupdate area - {$areaParkir->nama_area}",
         ]);
 
         return response()->json([
@@ -107,11 +96,8 @@ class AreaParkirController extends Controller
         $areaParkir->delete();
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'DELETE',
-            'modul' => 'Area Parkir',
-            'keterangan' => "Menghapus area: {$nama}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "DELETE: Menghapus area - {$nama}",
         ]);
 
         return response()->json([

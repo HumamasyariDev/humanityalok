@@ -17,7 +17,6 @@ class KendaraanController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('plat_nomor', 'like', "%{$search}%")
-                  ->orWhere('merk', 'like', "%{$search}%")
                   ->orWhere('pemilik', 'like', "%{$search}%");
             });
         }
@@ -26,7 +25,7 @@ class KendaraanController extends Controller
             $query->where('jenis_kendaraan', $request->jenis);
         }
 
-        $kendaraans = $query->orderBy('created_at', 'desc')->paginate($request->get('per_page', 10));
+        $kendaraans = $query->orderBy('id_kendaraan', 'desc')->paginate($request->get('per_page', 10));
 
         return response()->json([
             'success' => true,
@@ -37,23 +36,19 @@ class KendaraanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'plat_nomor' => 'required|string|unique:kendaraans',
+            'plat_nomor' => 'required|string|unique:tb_kendaraan',
             'jenis_kendaraan' => 'required|string',
-            'merk' => 'nullable|string',
             'warna' => 'nullable|string',
             'pemilik' => 'nullable|string',
         ]);
 
         $kendaraan = Kendaraan::create($request->only([
-            'plat_nomor', 'jenis_kendaraan', 'merk', 'warna', 'pemilik'
+            'plat_nomor', 'jenis_kendaraan', 'warna', 'pemilik'
         ]));
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'CREATE',
-            'modul' => 'Kendaraan',
-            'keterangan' => "Menambah kendaraan: {$kendaraan->plat_nomor}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "CREATE: Menambah kendaraan - {$kendaraan->plat_nomor}",
         ]);
 
         return response()->json([
@@ -86,23 +81,19 @@ class KendaraanController extends Controller
     public function update(Request $request, Kendaraan $kendaraan)
     {
         $request->validate([
-            'plat_nomor' => 'required|string|unique:kendaraans,plat_nomor,' . $kendaraan->id,
+            'plat_nomor' => 'required|string|unique:tb_kendaraan,plat_nomor,' . $kendaraan->id_kendaraan,
             'jenis_kendaraan' => 'required|string',
-            'merk' => 'nullable|string',
             'warna' => 'nullable|string',
             'pemilik' => 'nullable|string',
         ]);
 
         $kendaraan->update($request->only([
-            'plat_nomor', 'jenis_kendaraan', 'merk', 'warna', 'pemilik'
+            'plat_nomor', 'jenis_kendaraan', 'warna', 'pemilik'
         ]));
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'UPDATE',
-            'modul' => 'Kendaraan',
-            'keterangan' => "Mengupdate kendaraan: {$kendaraan->plat_nomor}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "UPDATE: Mengupdate kendaraan - {$kendaraan->plat_nomor}",
         ]);
 
         return response()->json([
@@ -118,11 +109,8 @@ class KendaraanController extends Controller
         $kendaraan->delete();
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'DELETE',
-            'modul' => 'Kendaraan',
-            'keterangan' => "Menghapus kendaraan: {$plat}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "DELETE: Menghapus kendaraan - {$plat}",
         ]);
 
         return response()->json([

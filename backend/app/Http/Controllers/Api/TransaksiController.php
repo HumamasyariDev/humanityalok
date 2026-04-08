@@ -25,10 +25,9 @@ class TransaksiController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('kode_transaksi', 'like', "%{$search}%")
-                  ->orWhereHas('kendaraan', function ($q2) use ($search) {
-                      $q2->where('plat_nomor', 'like', "%{$search}%");
-                  });
+                $q->whereHas('kendaraan', function ($q2) use ($search) {
+                    $q2->where('plat_nomor', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -39,7 +38,7 @@ class TransaksiController extends Controller
             ]);
         }
 
-        $transaksis = $query->orderBy('created_at', 'desc')
+        $transaksis = $query->orderBy('waktu_masuk', 'desc')
             ->paginate($request->get('per_page', 10));
 
         return response()->json([
@@ -53,12 +52,11 @@ class TransaksiController extends Controller
         $request->validate([
             'plat_nomor' => 'required|string',
             'jenis_kendaraan' => 'required|string',
-            'area_parkir_id' => 'required|exists:area_parkirs,id',
-            'merk' => 'nullable|string',
+            'id_area' => 'required|exists:tb_area_parkir,id_area',
             'warna' => 'nullable|string',
         ]);
 
-        $area = AreaParkir::findOrFail($request->area_parkir_id);
+        $area = AreaParkir::findOrFail($request->id_area);
         if ($area->isFull()) {
             return response()->json([
                 'success' => false,
@@ -78,13 +76,12 @@ class TransaksiController extends Controller
             ['plat_nomor' => strtoupper($request->plat_nomor)],
             [
                 'jenis_kendaraan' => $request->jenis_kendaraan,
-                'merk' => $request->merk,
                 'warna' => $request->warna,
             ]
         );
 
-        $existing = Transaksi::where('kendaraan_id', $kendaraan->id)
-            ->where('status', 'parkir')
+        $existing = Transaksi::where('id_kendaraan', $kendaraan->id_kendaraan)
+            ->where('status', 'masuk')
             ->first();
 
         if ($existing) {
@@ -94,28 +91,20 @@ class TransaksiController extends Controller
             ], 422);
         }
 
-        $kodeTransaksi = 'TRX-' . date('Ymd') . '-' . strtoupper(Str::random(6));
-        $barcode = 'PKR' . time() . rand(1000, 9999);
-
         $transaksi = Transaksi::create([
-            'kode_transaksi' => $kodeTransaksi,
-            'barcode' => $barcode,
-            'kendaraan_id' => $kendaraan->id,
-            'area_parkir_id' => $area->id,
-            'tarif_parkir_id' => $tarif->id,
-            'user_id' => $request->user()->id,
+            'id_kendaraan' => $kendaraan->id_kendaraan,
+            'id_area' => $area->id_area,
+            'id_tarif' => $tarif->id_tarif,
+            'id_user' => $request->user()->id_user,
             'waktu_masuk' => Carbon::now(),
-            'status' => 'parkir',
+            'status' => 'masuk',
         ]);
 
         $area->increment('terisi');
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'MASUK',
-            'modul' => 'Transaksi',
-            'keterangan' => "Kendaraan masuk: {$kendaraan->plat_nomor} - Area: {$area->nama_area}",
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "MASUK: Kendaraan masuk - {$kendaraan->plat_nomor} - Area: {$area->nama_area}",
         ]);
 
         $transaksi->load(['kendaraan', 'areaParkir', 'tarifParkir', 'user']);
@@ -129,14 +118,10 @@ class TransaksiController extends Controller
 
     public function keluar(Request $request, $id)
     {
-        $request->validate([
-            'metode_pembayaran' => 'required|in:tunai,kartu,e-wallet',
-        ]);
-
         $transaksi = Transaksi::with(['kendaraan', 'areaParkir', 'tarifParkir'])
             ->findOrFail($id);
 
-        if ($transaksi->status === 'selesai') {
+        if ($transaksi->status === 'keluar') {
             return response()->json([
                 'success' => false,
                 'message' => 'Transaksi sudah selesai!',
@@ -149,24 +134,20 @@ class TransaksiController extends Controller
         $durasiJam = ceil($durasiMenit / 60);
 
         $tarif = $transaksi->tarifParkir;
-        $totalBiaya = $tarif->tarif_flat ?? ($durasiJam * $tarif->tarif_per_jam);
+        $biayaTotal = $durasiJam * $tarif->tarif_per_jam;
 
         $transaksi->update([
             'waktu_keluar' => $waktuKeluar,
-            'durasi_menit' => $durasiMenit,
-            'total_biaya' => $totalBiaya,
-            'status' => 'selesai',
-            'metode_pembayaran' => $request->metode_pembayaran,
+            'durasi_jam' => $durasiJam,
+            'biaya_total' => $biayaTotal,
+            'status' => 'keluar',
         ]);
 
         $transaksi->areaParkir->decrement('terisi');
 
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'KELUAR',
-            'modul' => 'Transaksi',
-            'keterangan' => "Kendaraan keluar: {$transaksi->kendaraan->plat_nomor} - Biaya: Rp " . number_format($totalBiaya),
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => "KELUAR: Kendaraan keluar - {$transaksi->kendaraan->plat_nomor} - Biaya: Rp " . number_format($biayaTotal),
         ]);
 
         $transaksi->load(['kendaraan', 'areaParkir', 'tarifParkir', 'user']);
@@ -197,21 +178,17 @@ class TransaksiController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'kode_transaksi' => $transaksi->kode_transaksi,
-                'barcode' => $transaksi->barcode,
                 'plat_nomor' => $transaksi->kendaraan->plat_nomor,
                 'jenis_kendaraan' => $transaksi->kendaraan->jenis_kendaraan,
-                'merk' => $transaksi->kendaraan->merk,
                 'warna' => $transaksi->kendaraan->warna,
                 'area_parkir' => $transaksi->areaParkir->nama_area,
                 'tarif_per_jam' => $transaksi->tarifParkir->tarif_per_jam,
                 'waktu_masuk' => $transaksi->waktu_masuk,
                 'waktu_keluar' => $transaksi->waktu_keluar,
-                'durasi_menit' => $transaksi->durasi_menit,
-                'total_biaya' => $transaksi->total_biaya,
-                'metode_pembayaran' => $transaksi->metode_pembayaran,
+                'durasi_jam' => $transaksi->durasi_jam,
+                'biaya_total' => $transaksi->biaya_total,
                 'status' => $transaksi->status,
-                'petugas' => $transaksi->user->name,
+                'petugas' => $transaksi->user->nama_lengkap,
             ],
         ]);
     }
@@ -221,13 +198,13 @@ class TransaksiController extends Controller
         $request->validate(['barcode' => 'required|string']);
 
         $transaksi = Transaksi::with(['kendaraan', 'areaParkir', 'tarifParkir', 'user'])
-            ->where('barcode', $request->barcode)
+            ->where('id_parkir', $request->barcode)
             ->first();
 
         if (!$transaksi) {
             return response()->json([
                 'success' => false,
-                'message' => 'Barcode tidak ditemukan!',
+                'message' => 'Transaksi tidak ditemukan!',
             ], 404);
         }
 
@@ -245,7 +222,7 @@ class TransaksiController extends Controller
         ]);
 
         $query = Transaksi::with(['kendaraan', 'areaParkir', 'tarifParkir', 'user'])
-            ->where('status', 'selesai')
+            ->where('status', 'keluar')
             ->whereBetween('waktu_masuk', [
                 $request->tanggal_mulai . ' 00:00:00',
                 $request->tanggal_selesai . ' 23:59:59',
@@ -253,7 +230,7 @@ class TransaksiController extends Controller
 
         $transaksis = $query->orderBy('waktu_masuk', 'desc')->get();
 
-        $totalPendapatan = $transaksis->sum('total_biaya');
+        $totalPendapatan = $transaksis->sum('biaya_total');
         $totalTransaksi = $transaksis->count();
 
         $perJenis = $transaksis->groupBy(function ($t) {
@@ -261,7 +238,7 @@ class TransaksiController extends Controller
         })->map(function ($group) {
             return [
                 'jumlah' => $group->count(),
-                'pendapatan' => $group->sum('total_biaya'),
+                'pendapatan' => $group->sum('biaya_total'),
             ];
         });
 
@@ -270,7 +247,7 @@ class TransaksiController extends Controller
         })->map(function ($group) {
             return [
                 'jumlah' => $group->count(),
-                'pendapatan' => $group->sum('total_biaya'),
+                'pendapatan' => $group->sum('biaya_total'),
             ];
         });
 
@@ -292,18 +269,18 @@ class TransaksiController extends Controller
 
         $transaksiHariIni = Transaksi::whereDate('waktu_masuk', $today)->count();
         $pendapatanHariIni = Transaksi::whereDate('waktu_masuk', $today)
-            ->where('status', 'selesai')
-            ->sum('total_biaya');
-        $kendaraanParkir = Transaksi::where('status', 'parkir')->count();
-        $totalArea = AreaParkir::where('status', 'aktif')->count();
-        $totalKapasitas = AreaParkir::where('status', 'aktif')->sum('kapasitas');
-        $totalTerisi = AreaParkir::where('status', 'aktif')->sum('terisi');
+            ->where('status', 'keluar')
+            ->sum('biaya_total');
+        $kendaraanParkir = Transaksi::where('status', 'masuk')->count();
+        $totalArea = AreaParkir::count();
+        $totalKapasitas = AreaParkir::sum('kapasitas');
+        $totalTerisi = AreaParkir::sum('terisi');
 
         $last7Days = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
-            $count = Transaksi::whereDate('waktu_masuk', $date)->where('status', 'selesai')->count();
-            $income = Transaksi::whereDate('waktu_masuk', $date)->where('status', 'selesai')->sum('total_biaya');
+            $count = Transaksi::whereDate('waktu_masuk', $date)->where('status', 'keluar')->count();
+            $income = Transaksi::whereDate('waktu_masuk', $date)->where('status', 'keluar')->sum('biaya_total');
             $last7Days[] = [
                 'tanggal' => $date->format('d M'),
                 'jumlah' => $count,
@@ -312,12 +289,11 @@ class TransaksiController extends Controller
         }
 
         $recentTransaksi = Transaksi::with(['kendaraan', 'areaParkir'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('waktu_masuk', 'desc')
             ->limit(5)
             ->get();
 
-        $areaStatus = AreaParkir::where('status', 'aktif')
-            ->select('id', 'kode_area', 'nama_area', 'kapasitas', 'terisi')
+        $areaStatus = AreaParkir::select('id_area', 'nama_area', 'kapasitas', 'terisi')
             ->get();
 
         return response()->json([

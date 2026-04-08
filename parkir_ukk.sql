@@ -11,40 +11,9 @@
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `area_parkirs`
---
-
-DROP TABLE IF EXISTS `area_parkirs`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `area_parkirs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `kode_area` varchar(255) NOT NULL,
-  `nama_area` varchar(255) NOT NULL,
-  `kapasitas` int(11) NOT NULL,
-  `terisi` int(11) NOT NULL DEFAULT 0,
-  `status` enum('aktif','nonaktif') NOT NULL DEFAULT 'aktif',
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `area_parkirs_kode_area_unique` (`kode_area`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `area_parkirs`
---
-
-LOCK TABLES `area_parkirs` WRITE;
-/*!40000 ALTER TABLE `area_parkirs` DISABLE KEYS */;
-INSERT INTO `area_parkirs` VALUES (1,'A1','Area Motor Utama',50,0,'aktif','2026-02-10 20:25:18','2026-02-10 20:44:49'),(2,'A2','Area Motor Belakang',30,0,'aktif','2026-02-10 20:25:18','2026-02-10 20:25:18'),(3,'B1','Area Mobil Lantai 1',25,0,'aktif','2026-02-10 20:25:18','2026-02-10 20:25:18'),(4,'B2','Area Mobil Lantai 2',25,0,'aktif','2026-02-10 20:25:18','2026-02-10 20:25:18'),(5,'C1','Area Truk & Bus',10,0,'aktif','2026-02-10 20:25:18','2026-02-10 20:25:18');
-/*!40000 ALTER TABLE `area_parkirs` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `cache`
@@ -186,69 +155,6 @@ LOCK TABLES `jobs` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `kendaraans`
---
-
-DROP TABLE IF EXISTS `kendaraans`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `kendaraans` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `plat_nomor` varchar(255) NOT NULL,
-  `jenis_kendaraan` varchar(255) NOT NULL,
-  `merk` varchar(255) DEFAULT NULL,
-  `warna` varchar(255) DEFAULT NULL,
-  `pemilik` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `kendaraans_plat_nomor_unique` (`plat_nomor`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `kendaraans`
---
-
-LOCK TABLES `kendaraans` WRITE;
-/*!40000 ALTER TABLE `kendaraans` DISABLE KEYS */;
-INSERT INTO `kendaraans` VALUES (1,'B 1234 V','Mobil','FVDSVGD','E',NULL,'2026-02-10 20:41:10','2026-02-10 20:41:10');
-/*!40000 ALTER TABLE `kendaraans` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `log_aktivitas`
---
-
-DROP TABLE IF EXISTS `log_aktivitas`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `log_aktivitas` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `aksi` varchar(255) NOT NULL,
-  `modul` varchar(255) NOT NULL,
-  `keterangan` text DEFAULT NULL,
-  `ip_address` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `log_aktivitas_user_id_foreign` (`user_id`),
-  CONSTRAINT `log_aktivitas_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `log_aktivitas`
---
-
-LOCK TABLES `log_aktivitas` WRITE;
-/*!40000 ALTER TABLE `log_aktivitas` DISABLE KEYS */;
-INSERT INTO `log_aktivitas` VALUES (1,1,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:39:06','2026-02-10 20:39:06'),(2,2,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:39:14','2026-02-10 20:39:14'),(3,3,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:40:43','2026-02-10 20:40:43'),(4,2,'MASUK','Transaksi','Kendaraan masuk: B 1234 V - Area: Area Motor Utama','127.0.0.1','2026-02-10 20:41:10','2026-02-10 20:41:10'),(5,2,'LOGOUT','Auth','User logout','127.0.0.1','2026-02-10 20:42:53','2026-02-10 20:42:53'),(6,1,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:43:18','2026-02-10 20:43:18'),(7,1,'LOGOUT','Auth','User logout','127.0.0.1','2026-02-10 20:44:17','2026-02-10 20:44:17'),(8,2,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:44:29','2026-02-10 20:44:29'),(9,2,'KELUAR','Transaksi','Kendaraan keluar: B 1234 V - Biaya: Rp 5,000','127.0.0.1','2026-02-10 20:44:49','2026-02-10 20:44:49'),(10,1,'LOGIN','Auth','User login berhasil','127.0.0.1','2026-02-10 20:45:22','2026-02-10 20:45:22');
-/*!40000 ALTER TABLE `log_aktivitas` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `migrations`
 --
 
@@ -269,7 +175,7 @@ CREATE TABLE `migrations` (
 
 LOCK TABLES `migrations` WRITE;
 /*!40000 ALTER TABLE `migrations` DISABLE KEYS */;
-INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2025_01_02_000001_create_tarif_parkirs_table',1),(5,'2025_01_02_000002_create_area_parkirs_table',1),(6,'2025_01_02_000003_create_kendaraans_table',1),(7,'2025_01_02_000004_create_transaksis_table',1),(8,'2025_01_02_000005_create_log_aktivitas_table',1),(9,'2026_02_11_033849_create_personal_access_tokens_table',2);
+INSERT INTO `migrations` VALUES (1,'0001_01_01_000000_create_users_table',1),(2,'0001_01_01_000001_create_cache_table',1),(3,'0001_01_01_000002_create_jobs_table',1),(4,'2025_01_02_000001_create_tarif_table',1),(5,'2025_01_02_000002_create_area_parkir_table',1),(6,'2025_01_02_000003_create_kendaraan_table',1),(7,'2025_01_02_000004_create_transaksi_table',1),(8,'2025_01_02_000005_create_log_aktivitas_table',1),(9,'2026_02_11_033849_create_personal_access_tokens_table',2);
 /*!40000 ALTER TABLE `migrations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -362,120 +268,192 @@ LOCK TABLES `sessions` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `tarif_parkirs`
+-- Table structure for table `tb_user`
 --
 
-DROP TABLE IF EXISTS `tarif_parkirs`;
+DROP TABLE IF EXISTS `tb_user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tarif_parkirs` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `jenis_kendaraan` varchar(255) NOT NULL,
-  `tarif_per_jam` decimal(10,2) NOT NULL,
-  `tarif_flat` decimal(10,2) DEFAULT NULL,
-  `denda_per_jam` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tarif_parkirs`
---
-
-LOCK TABLES `tarif_parkirs` WRITE;
-/*!40000 ALTER TABLE `tarif_parkirs` DISABLE KEYS */;
-INSERT INTO `tarif_parkirs` VALUES (1,'Motor',2000.00,NULL,1000.00,'2026-02-10 20:25:18','2026-02-10 20:25:18'),(2,'Mobil',5000.00,NULL,2000.00,'2026-02-10 20:25:18','2026-02-10 20:25:18'),(3,'Truk',10000.00,NULL,5000.00,'2026-02-10 20:25:18','2026-02-10 20:25:18'),(4,'Bus',15000.00,NULL,7000.00,'2026-02-10 20:25:18','2026-02-10 20:25:18');
-/*!40000 ALTER TABLE `tarif_parkirs` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `transaksis`
---
-
-DROP TABLE IF EXISTS `transaksis`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `transaksis` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `kode_transaksi` varchar(255) NOT NULL,
-  `barcode` varchar(255) NOT NULL,
-  `kendaraan_id` bigint(20) unsigned NOT NULL,
-  `area_parkir_id` bigint(20) unsigned NOT NULL,
-  `tarif_parkir_id` bigint(20) unsigned NOT NULL,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `waktu_masuk` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `waktu_keluar` timestamp NULL DEFAULT NULL,
-  `durasi_menit` int(11) DEFAULT NULL,
-  `total_biaya` decimal(12,2) DEFAULT NULL,
-  `status` enum('parkir','selesai') NOT NULL DEFAULT 'parkir',
-  `metode_pembayaran` enum('tunai','kartu','e-wallet') DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `transaksis_kode_transaksi_unique` (`kode_transaksi`),
-  UNIQUE KEY `transaksis_barcode_unique` (`barcode`),
-  KEY `transaksis_kendaraan_id_foreign` (`kendaraan_id`),
-  KEY `transaksis_area_parkir_id_foreign` (`area_parkir_id`),
-  KEY `transaksis_tarif_parkir_id_foreign` (`tarif_parkir_id`),
-  KEY `transaksis_user_id_foreign` (`user_id`),
-  CONSTRAINT `transaksis_area_parkir_id_foreign` FOREIGN KEY (`area_parkir_id`) REFERENCES `area_parkirs` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `transaksis_kendaraan_id_foreign` FOREIGN KEY (`kendaraan_id`) REFERENCES `kendaraans` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `transaksis_tarif_parkir_id_foreign` FOREIGN KEY (`tarif_parkir_id`) REFERENCES `tarif_parkirs` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `transaksis_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `transaksis`
---
-
-LOCK TABLES `transaksis` WRITE;
-/*!40000 ALTER TABLE `transaksis` DISABLE KEYS */;
-INSERT INTO `transaksis` VALUES (1,'TRX-20260211-3OAVWL','PKR17707812706676',1,1,2,2,'2026-02-11 03:44:49','2026-02-10 20:44:49',4,5000.00,'selesai','tunai','2026-02-10 20:41:10','2026-02-10 20:44:49');
-/*!40000 ALTER TABLE `transaksis` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
+CREATE TABLE `tb_user` (
+  `id_user` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_lengkap` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,
   `role` enum('admin','petugas','owner') NOT NULL DEFAULT 'petugas',
-  `remember_token` varchar(100) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
+  `status_aktif` tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`id_user`),
+  UNIQUE KEY `tb_user_username_unique` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `tb_user`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Administrator','admin@parkir.com',NULL,'$2y$12$VChHMUqu2T21x5NeT4pS/.3q9Fp7PnE8toPQ871He7NrnTEbSWu3O','admin',NULL,'2026-02-10 20:25:17','2026-02-10 20:25:17'),(2,'Petugas Parkir','petugas@parkir.com',NULL,'$2y$12$NDr3NtC80HfsVWroGsWOeep5uIhEG5rKDi0aZKGAuXkAJrmJyuCHu','petugas',NULL,'2026-02-10 20:25:18','2026-02-10 20:25:18'),(3,'Owner','owner@parkir.com',NULL,'$2y$12$Li967iCiu5g/EyO.OjwPx.HxYo5jl/brueyIOY2uq/hKqnlIF4qta','owner',NULL,'2026-02-10 20:25:18','2026-02-10 20:25:18');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+LOCK TABLES `tb_user` WRITE;
+/*!40000 ALTER TABLE `tb_user` DISABLE KEYS */;
+INSERT INTO `tb_user` VALUES (1,'Administrator','admin','$2y$12$VChHMUqu2T21x5NeT4pS/.3q9Fp7PnE8toPQ871He7NrnTEbSWu3O','admin',1),(2,'Petugas Parkir','petugas','$2y$12$NDr3NtC80HfsVWroGsWOeep5uIhEG5rKDi0aZKGAuXkAJrmJyuCHu','petugas',1),(3,'Owner','owner','$2y$12$Li967iCiu5g/EyO.OjwPx.HxYo5jl/brueyIOY2uq/hKqnlIF4qta','owner',1);
+/*!40000 ALTER TABLE `tb_user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_kendaraan`
+--
+
+DROP TABLE IF EXISTS `tb_kendaraan`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_kendaraan` (
+  `id_kendaraan` int(11) NOT NULL AUTO_INCREMENT,
+  `plat_nomor` varchar(15) NOT NULL,
+  `jenis_kendaraan` varchar(20) NOT NULL,
+  `warna` varchar(20) NOT NULL,
+  `pemilik` varchar(100) DEFAULT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id_kendaraan`),
+  UNIQUE KEY `tb_kendaraan_plat_nomor_unique` (`plat_nomor`),
+  KEY `tb_kendaraan_id_user_foreign` (`id_user`),
+  CONSTRAINT `tb_kendaraan_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `tb_user` (`id_user`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_kendaraan`
+--
+
+LOCK TABLES `tb_kendaraan` WRITE;
+/*!40000 ALTER TABLE `tb_kendaraan` DISABLE KEYS */;
+INSERT INTO `tb_kendaraan` VALUES (1,'B 1234 V','Mobil','E','Pemilik Contoh',NULL);
+/*!40000 ALTER TABLE `tb_kendaraan` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_tarif`
+--
+
+DROP TABLE IF EXISTS `tb_tarif`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_tarif` (
+  `id_tarif` int(11) NOT NULL AUTO_INCREMENT,
+  `jenis_kendaraan` enum('motor','mobil','lainnya') NOT NULL,
+  `tarif_per_jam` decimal(10,0) NOT NULL,
+  PRIMARY KEY (`id_tarif`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_tarif`
+--
+
+LOCK TABLES `tb_tarif` WRITE;
+/*!40000 ALTER TABLE `tb_tarif` DISABLE KEYS */;
+INSERT INTO `tb_tarif` VALUES (1,'motor',2000),(2,'mobil',5000),(3,'lainnya',10000);
+/*!40000 ALTER TABLE `tb_tarif` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_area_parkir`
+--
+
+DROP TABLE IF EXISTS `tb_area_parkir`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_area_parkir` (
+  `id_area` int(11) NOT NULL AUTO_INCREMENT,
+  `nama_area` varchar(50) NOT NULL,
+  `kapasitas` int(5) NOT NULL,
+  `terisi` int(5) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id_area`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_area_parkir`
+--
+
+LOCK TABLES `tb_area_parkir` WRITE;
+/*!40000 ALTER TABLE `tb_area_parkir` DISABLE KEYS */;
+INSERT INTO `tb_area_parkir` VALUES (1,'Area Motor Utama',50,0),(2,'Area Motor Belakang',30,0),(3,'Area Mobil Lantai 1',25,0),(4,'Area Mobil Lantai 2',25,0),(5,'Area Truk & Bus',10,0);
+/*!40000 ALTER TABLE `tb_area_parkir` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_transaksi`
+--
+
+DROP TABLE IF EXISTS `tb_transaksi`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_transaksi` (
+  `id_parkir` int(11) NOT NULL AUTO_INCREMENT,
+  `id_kendaraan` int(11) NOT NULL,
+  `waktu_masuk` datetime NOT NULL,
+  `waktu_keluar` datetime DEFAULT NULL,
+  `id_tarif` int(11) NOT NULL,
+  `durasi_jam` int(5) DEFAULT NULL,
+  `biaya_total` decimal(10,0) DEFAULT NULL,
+  `status` enum('masuk','keluar') NOT NULL,
+  `id_user` int(11) NOT NULL,
+  `id_area` int(11) NOT NULL,
+  PRIMARY KEY (`id_parkir`),
+  KEY `tb_transaksi_id_kendaraan_foreign` (`id_kendaraan`),
+  KEY `tb_transaksi_id_tarif_foreign` (`id_tarif`),
+  KEY `tb_transaksi_id_user_foreign` (`id_user`),
+  KEY `tb_transaksi_id_area_foreign` (`id_area`),
+  CONSTRAINT `tb_transaksi_id_area_foreign` FOREIGN KEY (`id_area`) REFERENCES `tb_area_parkir` (`id_area`) ON DELETE CASCADE,
+  CONSTRAINT `tb_transaksi_id_kendaraan_foreign` FOREIGN KEY (`id_kendaraan`) REFERENCES `tb_kendaraan` (`id_kendaraan`) ON DELETE CASCADE,
+  CONSTRAINT `tb_transaksi_id_tarif_foreign` FOREIGN KEY (`id_tarif`) REFERENCES `tb_tarif` (`id_tarif`) ON DELETE CASCADE,
+  CONSTRAINT `tb_transaksi_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `tb_user` (`id_user`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_transaksi`
+--
+
+LOCK TABLES `tb_transaksi` WRITE;
+/*!40000 ALTER TABLE `tb_transaksi` DISABLE KEYS */;
+INSERT INTO `tb_transaksi` VALUES (1,1,'2026-02-11 03:44:49','2026-02-10 20:44:49',2,4,5000,'keluar',2,1);
+/*!40000 ALTER TABLE `tb_transaksi` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tb_log_aktivitas`
+--
+
+DROP TABLE IF EXISTS `tb_log_aktivitas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_log_aktivitas` (
+  `id_log` int(11) NOT NULL AUTO_INCREMENT,
+  `id_user` int(11) NOT NULL,
+  `aktivitas` varchar(100) NOT NULL,
+  `waktu_aktivitas` datetime NOT NULL,
+  PRIMARY KEY (`id_log`),
+  KEY `tb_log_aktivitas_id_user_foreign` (`id_user`),
+  CONSTRAINT `tb_log_aktivitas_id_user_foreign` FOREIGN KEY (`id_user`) REFERENCES `tb_user` (`id_user`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tb_log_aktivitas`
+--
+
+LOCK TABLES `tb_log_aktivitas` WRITE;
+/*!40000 ALTER TABLE `tb_log_aktivitas` DISABLE KEYS */;
+INSERT INTO `tb_log_aktivitas` VALUES (1,1,'LOGIN','2026-02-10 20:39:06'),(2,2,'LOGIN','2026-02-10 20:39:14'),(3,3,'LOGIN','2026-02-10 20:40:43'),(4,2,'MASUK','2026-02-10 20:41:10'),(5,2,'LOGOUT','2026-02-10 20:42:53'),(6,1,'LOGIN','2026-02-10 20:43:18'),(7,1,'LOGOUT','2026-02-10 20:44:17'),(8,2,'LOGIN','2026-02-10 20:44:29'),(9,2,'KELUAR','2026-02-10 20:44:49'),(10,1,'LOGIN','2026-02-10 20:45:22');
+/*!40000 ALTER TABLE `tb_log_aktivitas` ENABLE KEYS */;
+UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40111 SET @OLD_SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-11 10:47:30
+-- Dump completed on 2026-04-08 10:00:00

@@ -9,46 +9,45 @@ class Transaksi extends Model
 {
     use HasFactory;
 
-    protected $table = 'transaksis';
+    protected $table = 'tb_transaksi';
+    protected $primaryKey = 'id_parkir';
+    public $timestamps = false;
 
     protected $fillable = [
-        'kode_transaksi',
-        'barcode',
-        'kendaraan_id',
-        'area_parkir_id',
-        'tarif_parkir_id',
-        'user_id',
+        'id_kendaraan',
         'waktu_masuk',
         'waktu_keluar',
-        'durasi_menit',
-        'total_biaya',
+        'id_tarif',
+        'durasi_jam',
+        'biaya_total',
         'status',
-        'metode_pembayaran',
+        'id_user',
+        'id_area',
     ];
 
     protected $casts = [
         'waktu_masuk' => 'datetime',
         'waktu_keluar' => 'datetime',
-        'total_biaya' => 'decimal:2',
+        'biaya_total' => 'decimal:0',
     ];
 
     public function kendaraan()
     {
-        return $this->belongsTo(Kendaraan::class);
+        return $this->belongsTo(Kendaraan::class, 'id_kendaraan', 'id_kendaraan');
     }
 
     public function areaParkir()
     {
-        return $this->belongsTo(AreaParkir::class, 'area_parkir_id');
+        return $this->belongsTo(AreaParkir::class, 'id_area', 'id_area');
     }
 
     public function tarifParkir()
     {
-        return $this->belongsTo(TarifParkir::class, 'tarif_parkir_id');
+        return $this->belongsTo(TarifParkir::class, 'id_tarif', 'id_tarif');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 }

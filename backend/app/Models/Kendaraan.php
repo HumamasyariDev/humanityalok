@@ -9,14 +9,16 @@ class Kendaraan extends Model
 {
     use HasFactory;
 
-    protected $table = 'kendaraans';
+    protected $table = 'tb_kendaraan';
+    protected $primaryKey = 'id_kendaraan';
+    public $timestamps = false;
 
     protected $fillable = [
         'plat_nomor',
         'jenis_kendaraan',
-        'merk',
         'warna',
         'pemilik',
+        'id_user',
     ];
 
     public function transaksis()

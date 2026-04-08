@@ -15,26 +15,30 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'username' => 'required|string',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
-                'email' => ['Email atau password salah.'],
+                'username' => ['Username atau password salah.'],
+            ]);
+        }
+
+        if (!$user->status_aktif) {
+            throw ValidationException::withMessages([
+                'username' => ['Akun Anda tidak aktif.'],
             ]);
         }
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
         LogAktivitas::create([
-            'user_id' => $user->id,
-            'aksi' => 'LOGIN',
-            'modul' => 'Auth',
-            'keterangan' => 'User login berhasil',
-            'ip_address' => $request->ip(),
+            'id_user' => $user->id_user,
+            'aktivitas' => 'LOGIN',
+            'waktu_aktivitas' => now(),
         ]);
 
         return response()->json([
@@ -50,11 +54,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         LogAktivitas::create([
-            'user_id' => $request->user()->id,
-            'aksi' => 'LOGOUT',
-            'modul' => 'Auth',
-            'keterangan' => 'User logout',
-            'ip_address' => $request->ip(),
+            'id_user' => $request->user()->id_user,
+            'aktivitas' => 'LOGOUT',
+            'waktu_aktivitas' => now(),
         ]);
 
         $request->user()->currentAccessToken()->delete();

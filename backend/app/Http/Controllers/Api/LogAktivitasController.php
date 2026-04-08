@@ -15,24 +15,18 @@ class LogAktivitasController extends Controller
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
-                $q->where('aksi', 'like', "%{$search}%")
-                  ->orWhere('modul', 'like', "%{$search}%")
-                  ->orWhere('keterangan', 'like', "%{$search}%");
+                $q->where('aktivitas', 'like', "%{$search}%");
             });
         }
 
-        if ($request->has('modul')) {
-            $query->where('modul', $request->modul);
-        }
-
         if ($request->has('tanggal_mulai') && $request->has('tanggal_selesai')) {
-            $query->whereBetween('created_at', [
+            $query->whereBetween('waktu_log', [
                 $request->tanggal_mulai . ' 00:00:00',
                 $request->tanggal_selesai . ' 23:59:59',
             ]);
         }
 
-        $logs = $query->orderBy('created_at', 'desc')
+        $logs = $query->orderBy('waktu_log', 'desc')
             ->paginate($request->get('per_page', 15));
 
         return response()->json([

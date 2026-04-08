@@ -9,19 +9,19 @@ class AreaParkir extends Model
 {
     use HasFactory;
 
-    protected $table = 'area_parkirs';
+    protected $table = 'tb_area_parkir';
+    protected $primaryKey = 'id_area';
+    public $timestamps = false;
 
     protected $fillable = [
-        'kode_area',
         'nama_area',
         'kapasitas',
         'terisi',
-        'status',
     ];
 
     public function transaksis()
     {
-        return $this->hasMany(Transaksi::class, 'area_parkir_id');
+        return $this->hasMany(Transaksi::class, 'id_area', 'id_area');
     }
 
     public function isFull(): bool
