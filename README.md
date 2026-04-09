@@ -1,97 +1,164 @@
-# 🚗 Smart Parking System
+# SmartPark - Sistem Manajemen Parkir
 
-Sistem manajemen parkir berbasis web yang modern dan efisien untuk mengelola area parkir kendaraan dengan fitur barcode, tracking real-time, dan laporan komprehensif.
+Aplikasi manajemen parkir berbasis web dengan fitur barcode, monitoring real-time, AI Chatbot, dan laporan komprehensif. Dibuat untuk UKK (Uji Kompetensi Keahlian) RPL Paket 2 Tahun Pelajaran 2025/2026.
 
-## 📋 Deskripsi
+## Deskripsi
 
-Smart Parking System adalah aplikasi web full-stack yang dirancang untuk mengelola sistem parkir secara digital. Sistem ini memungkinkan admin dan petugas untuk mengelola transaksi parkir, area parkir, tarif, dan menghasilkan laporan secara otomatis dengan antarmuka yang modern dan user-friendly.
+SmartPark adalah aplikasi web full-stack yang mengelola sistem parkir secara digital. Sistem mendukung 3 level pengguna (Admin, Petugas, Owner) dengan fitur transaksi parkir, manajemen area & tarif, cetak struk, rekap laporan, serta AI Chatbot untuk cek biaya dan slot parkir.
 
-## ✨ Fitur Utama
+## Fitur
 
-### 👤 Multi-Role User Management
-- **Admin**: Akses penuh ke semua fitur sistem
-- **Petugas**: Akses untuk transaksi parkir dan laporan
+### Multi-Role User Management
+| Fitur | Admin | Petugas | Owner |
+|---|:---:|:---:|:---:|
+| Login / Logout | v | v | v |
+| CRUD User | v | | |
+| CRUD Tarif Parkir | v | | |
+| CRUD Area Parkir | v | | |
+| CRUD Kendaraan | v | v | |
+| Transaksi Masuk/Keluar | v | v | |
+| Cetak Struk Parkir | v | v | |
+| Akses Log Aktivitas | v | | |
+| Rekap Transaksi | v | | v |
+| AI Chatbot | v | v | v |
 
-### 🎫 Manajemen Transaksi Parkir
-- ✅ Transaksi kendaraan masuk dengan barcode otomatis
-- ✅ Transaksi kendaraan keluar dengan perhitungan biaya otomatis
-- ✅ Cetak kartu parkir dengan barcode
-- ✅ Cetak struk pembayaran
-- ✅ Riwayat transaksi lengkap
+### Transaksi Parkir
+- Transaksi kendaraan masuk dengan barcode otomatis
+- Transaksi kendaraan keluar dengan scan barcode
+- Perhitungan biaya otomatis (tarif per jam x durasi, pembulatan ke atas)
+- Cetak kartu parkir dan struk pembayaran
 
-### 🏢 Manajemen Area Parkir
-- 📊 Monitoring kapasitas area parkir real-time
-- 🔄 Update status ketersediaan otomatis
-- 📍 Multi-area parking support
+### Area Parkir
+- Monitoring kapasitas area parkir real-time
+- Update status ketersediaan otomatis saat kendaraan masuk/keluar
+- Multi-area parking support
 
-### 💰 Manajemen Tarif Parkir
-- 🏷️ Tarif berdasarkan jenis kendaraan (Motor/Mobil)
-- ⏰ Perhitungan biaya otomatis berdasarkan durasi parkir
-- 💵 Flexible pricing configuration
+### Tarif Parkir
+- Tarif berdasarkan jenis kendaraan: Motor (Rp 2.000/jam), Mobil (Rp 5.000/jam), Lainnya (Rp 10.000/jam)
+- Konfigurasi tarif fleksibel melalui CRUD
 
-### 📊 Laporan & Analytics
-- 📈 Rekap transaksi harian/bulanan
-- 💵 Total pendapatan
-- 📉 Statistik kendaraan masuk/keluar
-- 🖨️ Export dan print laporan
+### Dashboard
+- Statistik transaksi hari ini dan pendapatan
+- Grafik tren 7 hari terakhir
+- Status area parkir real-time
+- Quick action cards (Kendaraan Masuk, Keluar, Rekap)
+- Daftar transaksi terbaru
 
-### 🔐 Keamanan
-- 🔒 JWT Authentication
-- 👥 Role-based access control
-- 📝 Log aktivitas pengguna
+### Rekap & Laporan
+- Rekap transaksi berdasarkan rentang waktu
+- Grafik pendapatan dan analisis per jenis kendaraan
+- Export laporan ke CSV
 
-## 🛠️ Tech Stack
+### AI Chatbot
+- Chatbot untuk cek estimasi biaya parkir berdasarkan durasi
+- Cek sisa kapasitas area parkir secara real-time
+- Powered by NVIDIA AI API (Llama 3.1 8B)
+- Floating widget yang tersedia di semua halaman
+
+### Keamanan
+- Token-based authentication (Laravel Sanctum)
+- Role-based access control dengan middleware
+- Log aktivitas seluruh pengguna
+
+## Tech Stack
 
 ### Backend
-- **Framework**: Laravel 11
+- **Framework**: Laravel 12
 - **Database**: MySQL
-- **Authentication**: Laravel Sanctum (JWT)
+- **Authentication**: Laravel Sanctum
+- **AI Integration**: NVIDIA AI API (Llama 3.1 8B)
 - **API**: RESTful API
 
 ### Frontend
-- **Framework**: React 18 + Vite
-- **UI Library**: Tailwind CSS + shadcn/ui
+- **Framework**: React 19 + Vite 7
+- **Styling**: Tailwind CSS 4
 - **State Management**: React Context API
 - **HTTP Client**: Axios
-- **Routing**: React Router DOM
+- **Routing**: React Router DOM 7
+- **Charts**: Recharts
 - **Barcode**: react-barcode
+- **Icons**: react-icons (Feather Icons)
+- **Notifications**: react-hot-toast
 
-## 📁 Struktur Project
+## Skema Database
+
+Semua tabel menggunakan prefix `tb_`:
+
+```
+tb_user          - Data pengguna (id_user, nama_lengkap, username, password, role, status_aktif)
+tb_tarif         - Tarif parkir (id_tarif, jenis_kendaraan, tarif_per_jam)
+tb_area_parkir   - Area parkir (id_area, nama_area, kapasitas, terisi)
+tb_kendaraan     - Data kendaraan (id_kendaraan, plat_nomor, jenis_kendaraan, warna, pemilik)
+tb_transaksi     - Transaksi parkir (id_parkir, id_kendaraan, waktu_masuk/keluar, id_tarif, durasi_jam, biaya_total, status, id_user, id_area)
+tb_log_aktivitas - Log aktivitas (id_log, id_user, aktivitas, waktu_aktivitas)
+```
+
+## Struktur Project
 
 ```
 parkir-ukk/
-├── backend/                # Laravel Backend
+├── backend/                    # Laravel 12 Backend
 │   ├── app/
 │   │   ├── Http/
 │   │   │   ├── Controllers/Api/
+│   │   │   │   ├── AuthController.php
+│   │   │   │   ├── UserController.php
+│   │   │   │   ├── TarifParkirController.php
+│   │   │   │   ├── AreaParkirController.php
+│   │   │   │   ├── KendaraanController.php
+│   │   │   │   ├── TransaksiController.php
+│   │   │   │   ├── LogAktivitasController.php
+│   │   │   │   └── ChatbotController.php
 │   │   │   └── Middleware/
+│   │   │       └── RoleMiddleware.php
 │   │   └── Models/
+│   │       ├── User.php
+│   │       ├── TarifParkir.php
+│   │       ├── AreaParkir.php
+│   │       ├── Kendaraan.php
+│   │       ├── Transaksi.php
+│   │       └── LogAktivitas.php
 │   ├── config/
 │   ├── database/
 │   │   ├── migrations/
 │   │   └── seeders/
 │   └── routes/
-├── frontend/               # React Frontend
-│   ├── public/
+│       └── api.php
+├── frontend/                   # React 19 Frontend
 │   └── src/
 │       ├── components/
+│       │   ├── Layout.jsx
+│       │   ├── ConfirmDialog.jsx
+│       │   └── ChatbotWidget.jsx
 │       ├── contexts/
+│       │   └── AuthContext.jsx
 │       ├── lib/
-│       └── pages/
-├── parkir_ukk.sql         # Database Schema
-├── FLOWCHART.md           # System Flowchart
-└── DATABASE_DIAGRAM.md    # Database Diagram
+│       │   └── api.js
+│       ├── pages/
+│       │   ├── Login.jsx
+│       │   ├── Dashboard.jsx
+│       │   ├── TransaksiMasuk.jsx
+│       │   ├── TransaksiKeluar.jsx
+│       │   ├── TransaksiList.jsx
+│       │   ├── Kendaraan.jsx
+│       │   ├── TarifParkir.jsx
+│       │   ├── AreaParkir.jsx
+│       │   ├── Users.jsx
+│       │   ├── Rekap.jsx
+│       │   └── LogAktivitas.jsx
+│       ├── App.jsx
+│       └── index.css
+└── README.md
 ```
 
-## 🚀 Instalasi
+## Instalasi
 
 ### Prerequisites
-
 - PHP >= 8.2
 - Composer
 - Node.js >= 18
-- MySQL/MariaDB
-- XAMPP/LAMPP (optional)
+- MySQL / MariaDB
+- XAMPP / LAMPP (opsional)
 
 ### 1. Clone Repository
 
@@ -114,25 +181,22 @@ cp .env.example .env
 # Generate application key
 php artisan key:generate
 
-# Configure database in .env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=parkir_ukk
-DB_USERNAME=root
-DB_PASSWORD=
+# Konfigurasi database di .env
+# DB_DATABASE=parkir_ukk
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-# Run migrations
-php artisan migrate
+# Konfigurasi NVIDIA API key di .env untuk fitur AI Chatbot
+# NVIDIA_API_KEY=your_nvidia_api_key
 
-# (Optional) Seed database
-php artisan db:seed
+# Jalankan migrasi dan seeder
+php artisan migrate --seed
 
-# Start development server
+# Jalankan server
 php artisan serve
 ```
 
-Backend akan berjalan di `http://localhost:8000`
+Backend berjalan di `http://localhost:8000`
 
 ### 3. Frontend Setup
 
@@ -142,168 +206,123 @@ cd frontend
 # Install dependencies
 npm install
 
-# Configure API endpoint in src/lib/api.js
-# Pastikan baseURL sesuai dengan backend
-
-# Start development server
+# Jalankan development server
 npm run dev
 ```
 
-Frontend akan berjalan di `http://localhost:5173`
+Frontend berjalan di `http://localhost:5173`
 
-### 4. Import Database (Alternative)
+Vite sudah dikonfigurasi untuk proxy `/api` ke backend (`localhost:8000`).
 
-Jika ingin langsung import database:
+### 4. Build Production
 
 ```bash
-mysql -u root -p
-CREATE DATABASE parkir_ukk;
-USE parkir_ukk;
-SOURCE parkir_ukk.sql;
+cd frontend
+npm run build
 ```
 
-## 🔑 Default Credentials
+Hasil build ada di `frontend/dist/`.
 
-Setelah seeding database, gunakan credentials berikut:
+## Default Login
 
-### Admin
-- **Email**: admin@parkir.com
-- **Password**: password
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `password` |
+| Petugas | `petugas` | `password` |
+| Owner | `owner` | `password` |
 
-### Petugas
-- **Email**: petugas@parkir.com
-- **Password**: password
+Login menggunakan **username** (bukan email).
 
-## 📚 API Documentation
+## API Endpoints
 
 ### Authentication
-
-#### Login
-```http
-POST /api/login
-Content-Type: application/json
-
-{
-  "email": "admin@parkir.com",
-  "password": "password"
-}
 ```
-
-### Transaksi Endpoints
-
-#### Create Transaksi Masuk
-```http
-POST /api/transaksi/masuk
-Authorization: Bearer {token}
-
-{
-  "plat_nomor": "B1234XYZ",
-  "jenis_kendaraan": "mobil",
-  "area_parkir_id": 1
-}
+POST   /api/login              # Login (public)
+POST   /api/logout             # Logout
+GET    /api/me                 # Get current user
 ```
-
-#### Create Transaksi Keluar
-```http
-POST /api/transaksi/keluar
-Authorization: Bearer {token}
-
-{
-  "kode_parkir": "PKR-20250313-0001"
-}
-```
-
-### Area Parkir Endpoints
-
-```http
-GET    /api/area-parkir          # List all
-POST   /api/area-parkir          # Create
-GET    /api/area-parkir/{id}     # Show
-PUT    /api/area-parkir/{id}     # Update
-DELETE /api/area-parkir/{id}     # Delete
-```
-
-### Tarif Parkir Endpoints
-
-```http
-GET    /api/tarif-parkir         # List all
-POST   /api/tarif-parkir         # Create
-PUT    /api/tarif-parkir/{id}    # Update
-DELETE /api/tarif-parkir/{id}    # Delete
-```
-
-### User Management Endpoints
-
-```http
-GET    /api/users                # List all (Admin only)
-POST   /api/users                # Create (Admin only)
-PUT    /api/users/{id}           # Update (Admin only)
-DELETE /api/users/{id}           # Delete (Admin only)
-```
-
-## 📱 Fitur Unggulan
-
-### 1. Barcode System
-- Generate barcode otomatis untuk setiap transaksi
-- Scan barcode untuk proses keluar yang cepat
-- Print kartu parkir dengan barcode
-
-### 2. Real-time Monitoring
-- Status area parkir terupdate otomatis
-- Tracking kapasitas parkir real-time
-- Dashboard interaktif
-
-### 3. Automated Billing
-- Perhitungan biaya parkir otomatis
-- Support multiple tarif
-- Print struk pembayaran
-
-### 4. Comprehensive Reports
-- Laporan transaksi by periode
-- Rekap pendapatan
-- Export ke berbagai format
-
-## 🎨 Screenshots
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+```
+GET    /api/dashboard           # Dashboard stats & charts
+```
 
-### Transaksi Masuk
-![Transaksi Masuk](screenshots/transaksi-masuk.png)
+### Transaksi (Admin, Petugas)
+```
+GET    /api/transaksi           # List transaksi (filter: status, search, tanggal)
+POST   /api/transaksi/masuk     # Kendaraan masuk
+POST   /api/transaksi/{id}/keluar  # Kendaraan keluar
+GET    /api/transaksi/{id}      # Detail transaksi
+GET    /api/transaksi/{id}/struk   # Data struk
+POST   /api/transaksi/scan-barcode # Scan barcode
+```
 
-### Laporan
-![Laporan](screenshots/laporan.png)
+### Data Master
+```
+# Kendaraan (Admin, Petugas)
+GET|POST        /api/kendaraan
+GET|PUT|DELETE  /api/kendaraan/{id}
+POST            /api/kendaraan/find-plat
 
-## 🤝 Contributing
+# Tarif Parkir (Admin)
+GET|POST        /api/tarif-parkir
+GET|PUT|DELETE  /api/tarif-parkir/{id}
+GET             /api/tarif-parkir-all    # Semua tarif (tanpa pagination)
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+# Area Parkir (Admin)
+GET|POST        /api/area-parkir
+GET|PUT|DELETE  /api/area-parkir/{id}
+GET             /api/area-parkir-all     # Semua area (tanpa pagination)
+```
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+### Administrasi
+```
+GET    /api/users               # CRUD Users (Admin)
+GET    /api/rekap               # Rekap transaksi (Admin, Owner)
+GET    /api/log-aktivitas       # Log aktivitas (Admin)
+```
 
-## 📝 License
+### AI Chatbot
+```
+POST   /api/chatbot             # Kirim pesan ke AI chatbot (semua role)
+```
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## Seed Data
 
-## 👨‍💻 Developer
+### Area Parkir Default
+| Area | Kapasitas |
+|---|---|
+| Area Motor Utama | 50 |
+| Area Motor Belakang | 30 |
+| Area Mobil Lantai 1 | 25 |
+| Area Mobil Lantai 2 | 25 |
+| Area Truk & Bus | 10 |
+
+### Tarif Default
+| Jenis Kendaraan | Tarif/Jam |
+|---|---|
+| Motor | Rp 2.000 |
+| Mobil | Rp 5.000 |
+| Lainnya | Rp 10.000 |
+
+## Design System
+
+Aplikasi menggunakan design language yang konsisten di semua halaman:
+
+- **Color Scheme**: Gradient blue-to-indigo (`from-blue-600 to-indigo-600`)
+- **Cards**: `bg-white rounded-2xl shadow-sm border border-gray-100`
+- **Buttons**: Gradient dengan shadow dan `rounded-xl`
+- **Inputs**: `rounded-xl` dengan focus ring biru
+- **Sidebar**: Gradient `from-blue-700 via-blue-800 to-indigo-900` dengan grouped sections
+- **Topbar**: Breadcrumb navigasi (`SmartPark > Section > Page`)
+- **Modals**: `backdrop-blur-sm` overlay dengan `rounded-2xl` content
+- **Confirm Dialogs**: Custom component (bukan browser `confirm()`)
+
+## Developer
 
 **Humamasyari Dev**
 - GitHub: [@HumamasyariDev](https://github.com/HumamasyariDev)
 
-## 🙏 Acknowledgments
+## Lisensi
 
-- Laravel Team for the amazing framework
-- React Team for the powerful UI library
-- Tailwind CSS for the utility-first CSS framework
-- shadcn/ui for beautiful UI components
-
-## 📞 Support
-
-Jika ada pertanyaan atau masalah, silakan buat issue di GitHub repository atau hubungi developer.
-
----
-
-⭐ Jangan lupa beri star jika project ini membantu!
+Project ini dibuat untuk keperluan UKK RPL Paket 2 Tahun Pelajaran 2025/2026.
