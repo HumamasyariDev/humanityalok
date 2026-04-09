@@ -20,13 +20,13 @@ class LogAktivitasController extends Controller
         }
 
         if ($request->has('tanggal_mulai') && $request->has('tanggal_selesai')) {
-            $query->whereBetween('waktu_log', [
+            $query->whereBetween('waktu_aktivitas', [
                 $request->tanggal_mulai . ' 00:00:00',
                 $request->tanggal_selesai . ' 23:59:59',
             ]);
         }
 
-        $logs = $query->orderBy('waktu_log', 'desc')
+        $logs = $query->orderBy('waktu_aktivitas', 'desc')
             ->paginate($request->get('per_page', 15));
 
         return response()->json([
