@@ -10,7 +10,7 @@ export default function TransaksiMasuk() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [form, setForm] = useState({
-    plat_nomor: '', jenis_kendaraan: '', area_parkir_id: '', merk: '', warna: ''
+    plat_nomor: '', jenis_kendaraan: '', id_area: '', warna: ''
   })
   const printRef = useRef()
   const barcodeRef = useRef()
@@ -42,7 +42,7 @@ export default function TransaksiMasuk() {
       })
       setResult(res.data.data)
       toast.success('Kendaraan berhasil masuk parkir!')
-      setForm({ plat_nomor: '', jenis_kendaraan: '', area_parkir_id: '', merk: '', warna: '' })
+      setForm({ plat_nomor: '', jenis_kendaraan: '', id_area: '', warna: '' })
     } catch (err) {
       toast.error(err.response?.data?.message || 'Gagal memproses kendaraan masuk')
     } finally {
@@ -121,7 +121,7 @@ export default function TransaksiMasuk() {
               <div className="grid grid-cols-2 gap-2">
                 {tarifs.map((t) => (
                   <button
-                    key={t.id}
+                    key={t.id_tarif}
                     type="button"
                     onClick={() => setForm({...form, jenis_kendaraan: t.jenis_kendaraan})}
                     className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
@@ -138,24 +138,20 @@ export default function TransaksiMasuk() {
             <div>
               <label className="label-field">Area Parkir *</label>
               <select
-                value={form.area_parkir_id}
-                onChange={(e) => setForm({...form, area_parkir_id: e.target.value})}
+                value={form.id_area}
+                onChange={(e) => setForm({...form, id_area: e.target.value})}
                 className="input-field"
                 required
               >
                 <option value="">Pilih Area</option>
                 {areas.map((a) => (
-                  <option key={a.id} value={a.id} disabled={a.terisi >= a.kapasitas}>
-                    {a.kode_area} - {a.nama_area} (Sisa: {a.kapasitas - a.terisi}/{a.kapasitas})
+                  <option key={a.id_area} value={a.id_area} disabled={a.terisi >= a.kapasitas}>
+                    {a.nama_area} (Sisa: {a.kapasitas - a.terisi}/{a.kapasitas})
                   </option>
                 ))}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="label-field">Merk</label>
-                <input type="text" value={form.merk} onChange={(e) => setForm({...form, merk: e.target.value})} className="input-field" placeholder="Honda" />
-              </div>
               <div>
                 <label className="label-field">Warna</label>
                 <input type="text" value={form.warna} onChange={(e) => setForm({...form, warna: e.target.value})} className="input-field" placeholder="Hitam" />
@@ -185,11 +181,11 @@ export default function TransaksiMasuk() {
 
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-3 border border-white/10">
                 <div className="text-center">
-                  <p className="text-blue-200 text-xs uppercase tracking-wider">Kode Transaksi</p>
-                  <p className="text-lg font-bold tracking-wider">{result.kode_transaksi}</p>
+                  <p className="text-blue-200 text-xs uppercase tracking-wider">Kode Parkir</p>
+                  <p className="text-lg font-bold tracking-wider">PKR-{String(result.id_parkir).padStart(6, '0')}</p>
                 </div>
                 <div className="flex justify-center bg-white rounded-xl p-3" ref={barcodeRef}>
-                  <Barcode value={result.barcode || result.kode_transaksi} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
+                  <Barcode value={String(result.id_parkir)} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
                 </div>
               </div>
 
@@ -214,7 +210,7 @@ export default function TransaksiMasuk() {
               <div className="line"></div>
               <div id="barcode-placeholder"></div>
               <div className="line"></div>
-              <div className="row"><span>Kode</span><span>{result.kode_transaksi}</span></div>
+              <div className="row"><span>Kode</span><span>PKR-{String(result.id_parkir).padStart(6, '0')}</span></div>
               <div className="row"><span>Plat</span><span>{result.kendaraan?.plat_nomor}</span></div>
               <div className="row"><span>Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
               <div className="row"><span>Area</span><span>{result.area_parkir?.nama_area}</span></div>

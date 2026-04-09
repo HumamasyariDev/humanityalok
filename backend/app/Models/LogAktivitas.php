@@ -23,6 +23,15 @@ class LogAktivitas extends Model
         'waktu_aktivitas' => 'datetime',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($log) {
+            if (!$log->waktu_aktivitas) {
+                $log->waktu_aktivitas = now();
+            }
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
