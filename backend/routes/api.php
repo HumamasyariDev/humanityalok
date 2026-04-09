@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\AreaParkirController;
 use App\Http\Controllers\Api\KendaraanController;
 use App\Http\Controllers\Api\TransaksiController;
 use App\Http\Controllers\Api\LogAktivitasController;
+use App\Http\Controllers\Api\ChatbotController;
 
 // Public routes
 Route::post('/login', [AuthController::class, 'login']);
@@ -63,4 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::get('/log-aktivitas', [LogAktivitasController::class, 'index']);
     });
+
+    // AI Chatbot - Cek Biaya & Slot Parkir (All authenticated users)
+    Route::post('/chatbot', [ChatbotController::class, 'chat']);
 });

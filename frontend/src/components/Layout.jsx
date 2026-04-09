@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import ChatbotWidget from './ChatbotWidget'
 import { 
   FiHome, FiUsers, FiDollarSign, FiMapPin, FiTruck, 
   FiLogIn, FiLogOut, FiList, FiBarChart2, FiActivity,
@@ -212,6 +213,9 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* AI Chatbot Widget */}
+      <ChatbotWidget />
     </div>
   )
 }
