@@ -9,7 +9,6 @@ export default function TransaksiKeluar() {
   const [transaksi, setTransaksi] = useState(null)
   const [loading, setLoading] = useState(false)
   const [processing, setProcessing] = useState(false)
-  const [metode, setMetode] = useState('tunai')
   const [result, setResult] = useState(null)
   const printRef = useRef()
   const barcodeRef = useRef()
@@ -22,7 +21,7 @@ export default function TransaksiKeluar() {
     setResult(null)
     try {
       const res = await api.post('/transaksi/scan-barcode', { barcode: barcode.trim() })
-      if (res.data.data.status === 'selesai') {
+      if (res.data.data.status === 'keluar') {
         toast.error('Transaksi ini sudah selesai!')
         return
       }
@@ -39,7 +38,7 @@ export default function TransaksiKeluar() {
     if (!transaksi) return
     setProcessing(true)
     try {
-      const res = await api.post(`/transaksi/${transaksi.id}/keluar`, { metode_pembayaran: metode })
+      const res = await api.post(`/transaksi/${transaksi.id_parkir}/keluar`)
       setResult(res.data.data)
       setTransaksi(null)
       toast.success('Kendaraan berhasil keluar!')
@@ -99,7 +98,7 @@ export default function TransaksiKeluar() {
     const now = new Date()
     const diffJam = Math.ceil((now - masuk) / 3600000)
     const tarif = transaksi.tarif_parkir
-    return tarif?.tarif_flat || (diffJam * (tarif?.tarif_per_jam || 0))
+    return diffJam * (tarif?.tarif_per_jam || 0)
   }
 
   const duration = calcDuration()
@@ -122,7 +121,7 @@ export default function TransaksiKeluar() {
               type="text"
               value={barcode}
               onChange={(e) => setBarcode(e.target.value)}
-              placeholder="Scan barcode atau masukkan kode barcode..."
+              placeholder="Scan barcode atau masukkan ID parkir..."
               className="input-field pl-11 text-lg"
               autoFocus
             />
@@ -148,8 +147,8 @@ export default function TransaksiKeluar() {
             </div>
             <div className="space-y-2.5">
               <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
-                <span className="text-sm text-gray-500">Kode Transaksi</span>
-                <span className="text-sm font-bold font-mono">{transaksi.kode_transaksi}</span>
+                <span className="text-sm text-gray-500">ID Parkir</span>
+                <span className="text-sm font-bold font-mono">PKR-{transaksi.id_parkir}</span>
               </div>
               <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
                 <span className="text-sm text-gray-500">Plat Nomor</span>
@@ -174,27 +173,6 @@ export default function TransaksiKeluar() {
               <div className="flex justify-between p-3.5 bg-emerald-50 rounded-xl">
                 <span className="text-sm text-emerald-600 flex items-center gap-1.5"><FiDollarSign size={14} /> Estimasi Biaya</span>
                 <span className="text-sm font-bold text-emerald-700 text-lg">{formatRupiah(calcEstBiaya())}</span>
-              </div>
-
-              {/* Payment Method */}
-              <div className="pt-3">
-                <label className="label-field">Metode Pembayaran</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['tunai', 'kartu', 'e-wallet'].map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setMetode(m)}
-                      className={`p-3 rounded-xl border-2 text-sm font-medium transition-all capitalize ${
-                        metode === m
-                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-500/10'
-                          : 'border-gray-200 hover:border-gray-300 text-gray-600'
-                      }`}
-                    >
-                      {m === 'e-wallet' ? 'E-Wallet' : m.charAt(0).toUpperCase() + m.slice(1)}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               <button
@@ -225,23 +203,23 @@ export default function TransaksiKeluar() {
               </div>
 
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-2 text-sm border border-white/10">
-                <div className="flex justify-between"><span className="text-emerald-200">Kode</span><span className="font-bold">{result.kode_transaksi}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Kode</span><span className="font-bold">PKR-{result.id_parkir}</span></div>
                 <div className="flex justify-between"><span className="text-emerald-200">Plat Nomor</span><span className="font-bold">{result.kendaraan?.plat_nomor}</span></div>
                 <div className="flex justify-between"><span className="text-emerald-200">Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
                 <div className="flex justify-between"><span className="text-emerald-200">Area</span><span>{result.area_parkir?.nama_area}</span></div>
                 <div className="flex justify-between"><span className="text-emerald-200">Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
                 <div className="flex justify-between"><span className="text-emerald-200">Keluar</span><span>{formatDate(result.waktu_keluar)}</span></div>
-                <div className="flex justify-between"><span className="text-emerald-200">Durasi</span><span>{Math.floor((result.durasi_menit || 0) / 60)} jam {(result.durasi_menit || 0) % 60} menit</span></div>
-                <div className="flex justify-between"><span className="text-emerald-200">Pembayaran</span><span className="capitalize">{result.metode_pembayaran}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Durasi</span><span>{result.durasi_jam} jam</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Petugas</span><span>{result.user?.nama_lengkap}</span></div>
               </div>
 
               <div className="flex justify-center bg-white rounded-xl p-3 mt-4" ref={barcodeRef}>
-                <Barcode value={result.barcode || result.kode_transaksi} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
+                <Barcode value={String(result.id_parkir)} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
               </div>
 
               <div className="text-center mt-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10">
                 <p className="text-emerald-200 text-xs uppercase tracking-wider">Total Biaya</p>
-                <p className="text-3xl font-bold mt-1">{formatRupiah(result.total_biaya)}</p>
+                <p className="text-3xl font-bold mt-1">{formatRupiah(result.biaya_total)}</p>
               </div>
 
               <button onClick={handlePrint} className="w-full mt-5 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/20">
@@ -257,16 +235,16 @@ export default function TransaksiKeluar() {
               <div className="line"></div>
               <div id="barcode-placeholder"></div>
               <div className="line"></div>
-              <div className="row"><span>Kode</span><span>{result.kode_transaksi}</span></div>
+              <div className="row"><span>Kode</span><span>PKR-{result.id_parkir}</span></div>
               <div className="row"><span>Plat</span><span>{result.kendaraan?.plat_nomor}</span></div>
               <div className="row"><span>Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
               <div className="row"><span>Area</span><span>{result.area_parkir?.nama_area}</span></div>
               <div className="row"><span>Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
               <div className="row"><span>Keluar</span><span>{formatDate(result.waktu_keluar)}</span></div>
-              <div className="row"><span>Durasi</span><span>{Math.floor((result.durasi_menit || 0) / 60)}j {(result.durasi_menit || 0) % 60}m</span></div>
-              <div className="row"><span>Bayar</span><span style={{textTransform:'capitalize'}}>{result.metode_pembayaran}</span></div>
+              <div className="row"><span>Durasi</span><span>{result.durasi_jam} jam</span></div>
+              <div className="row"><span>Petugas</span><span>{result.user?.nama_lengkap}</span></div>
               <div className="line"></div>
-              <div className="total">{formatRupiah(result.total_biaya)}</div>
+              <div className="total">{formatRupiah(result.biaya_total)}</div>
               <div className="line"></div>
               <div className="center"><p>Terima kasih telah menggunakan</p><p>layanan SmartPark</p></div>
             </div>
@@ -280,7 +258,7 @@ export default function TransaksiKeluar() {
               <FiSearch className="text-emerald-400" size={28} />
             </div>
             <h3 className="font-semibold text-gray-800 mb-1">Scan Barcode</h3>
-            <p className="text-sm text-gray-400 max-w-[240px]">Scan atau masukkan kode barcode untuk memproses kendaraan keluar</p>
+            <p className="text-sm text-gray-400 max-w-[240px]">Scan atau masukkan ID parkir untuk memproses kendaraan keluar</p>
           </div>
         )}
       </div>

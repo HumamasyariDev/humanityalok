@@ -11,6 +11,7 @@ export default function TransaksiList() {
   const [status, setStatus] = useState('')
   const [pagination, setPagination] = useState({})
   const [showStruk, setShowStruk] = useState(null)
+  const [strukId, setStrukId] = useState(null)
   const barcodeRef = React.useRef()
 
   useEffect(() => { fetchTransaksis() }, [status])
@@ -35,10 +36,11 @@ export default function TransaksiList() {
     fetchTransaksis()
   }
 
-  const viewStruk = async (id) => {
+  const viewStruk = async (id_parkir) => {
     try {
-      const res = await api.get(`/transaksi/${id}/struk`)
+      const res = await api.get(`/transaksi/${id_parkir}/struk`)
       setShowStruk(res.data.data)
+      setStrukId(id_parkir)
     } catch (err) {
       toast.error('Gagal memuat struk')
     }
@@ -49,6 +51,7 @@ export default function TransaksiList() {
     const barcodeEl = barcodeRef.current
     const barcodeSvg = barcodeEl ? barcodeEl.querySelector('svg') : null
     const barcodeHtml = barcodeSvg ? barcodeSvg.outerHTML : ''
+    const durasiText = showStruk.durasi_jam ? `${showStruk.durasi_jam} jam` : '-'
     const win = window.open('', '', 'width=400,height=700')
     win.document.write(`
       <html>
@@ -74,16 +77,16 @@ export default function TransaksiList() {
           <div class="line"></div>
           <div class="barcode-container">${barcodeHtml}</div>
           <div class="line"></div>
-          <div class="row"><span>Kode</span><span>${showStruk.kode_transaksi}</span></div>
+          <div class="row"><span>Kode</span><span>PKR-${strukId}</span></div>
           <div class="row"><span>Plat</span><span>${showStruk.plat_nomor}</span></div>
           <div class="row"><span>Jenis</span><span>${showStruk.jenis_kendaraan}</span></div>
           <div class="row"><span>Area</span><span>${showStruk.area_parkir}</span></div>
           <div class="row"><span>Masuk</span><span>${showStruk.waktu_masuk ? new Date(showStruk.waktu_masuk).toLocaleString('id-ID') : '-'}</span></div>
           <div class="row"><span>Keluar</span><span>${showStruk.waktu_keluar ? new Date(showStruk.waktu_keluar).toLocaleString('id-ID') : '-'}</span></div>
-          <div class="row"><span>Durasi</span><span>${showStruk.durasi_menit ? Math.floor(showStruk.durasi_menit/60) + 'j ' + (showStruk.durasi_menit%60) + 'm' : '-'}</span></div>
+          <div class="row"><span>Durasi</span><span>${durasiText}</span></div>
           <div class="row"><span>Petugas</span><span>${showStruk.petugas}</span></div>
           <div class="line"></div>
-          ${showStruk.total_biaya ? `<div class="total">Rp ${Number(showStruk.total_biaya).toLocaleString('id-ID')}</div>` : '<div class="center bold">SEDANG PARKIR</div>'}
+          ${showStruk.biaya_total ? `<div class="total">Rp ${Number(showStruk.biaya_total).toLocaleString('id-ID')}</div>` : '<div class="center bold">SEDANG PARKIR</div>'}
           <div class="line"></div>
           <div class="center"><p>Terima kasih</p></div>
           <script>window.print();window.close();<\/script>
@@ -122,22 +125,26 @@ export default function TransaksiList() {
           <form onSubmit={handleSearch} className="flex gap-3 flex-1">
             <div className="relative flex-1">
               <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kode transaksi atau plat nomor..." className="input-field pl-11" />
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari plat nomor..." className="input-field pl-11" />
             </div>
             <button type="submit" className="btn-primary">Cari</button>
           </form>
           <div className="flex gap-1.5">
-            {['', 'parkir', 'selesai'].map((s) => (
+            {[
+              { value: '', label: 'Semua' },
+              { value: 'masuk', label: 'Parkir' },
+              { value: 'keluar', label: 'Selesai' },
+            ].map((s) => (
               <button
-                key={s}
-                onClick={() => setStatus(s)}
+                key={s.value}
+                onClick={() => setStatus(s.value)}
                 className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  status === s
+                  status === s.value
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20'
                     : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                 }`}
               >
-                {s === '' ? 'Semua' : s === 'parkir' ? 'Parkir' : 'Selesai'}
+                {s.label}
               </button>
             ))}
           </div>
@@ -163,23 +170,23 @@ export default function TransaksiList() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {transaksis.map((t) => (
-                <tr key={t.id} className="hover:bg-gray-50/50 transition-colors">
-                  <td className="px-6 py-4 text-xs font-mono text-gray-500">{t.kode_transaksi}</td>
+                <tr key={t.id_parkir} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 text-xs font-mono text-gray-500">PKR-{t.id_parkir}</td>
                   <td className="px-6 py-4 text-sm font-bold text-gray-900">{t.kendaraan?.plat_nomor}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{t.kendaraan?.jenis_kendaraan}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{t.area_parkir?.nama_area}</td>
                   <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_masuk)}</td>
                   <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_keluar)}</td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">{t.total_biaya ? formatRupiah(t.total_biaya) : '-'}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">{t.biaya_total ? formatRupiah(t.biaya_total) : '-'}</td>
                   <td className="px-6 py-4">
                     <span className={`badge ${
-                      t.status === 'parkir' || t.status === 'masuk' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                      t.status === 'masuk' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
                     }`}>
-                      {t.status === 'parkir' || t.status === 'masuk' ? 'Parkir' : 'Selesai'}
+                      {t.status === 'masuk' ? 'Parkir' : 'Selesai'}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <button onClick={() => viewStruk(t.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Lihat Struk">
+                    <button onClick={() => viewStruk(t.id_parkir)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Lihat Struk">
                       <FiEye size={15} />
                     </button>
                   </td>
@@ -214,30 +221,30 @@ export default function TransaksiList() {
           <div className="modal-content max-w-sm">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-lg font-bold text-gray-900">Detail Struk</h3>
-              <button onClick={() => setShowStruk(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+              <button onClick={() => { setShowStruk(null); setStrukId(null) }} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
                 <FiX size={18} className="text-gray-400" />
               </button>
             </div>
             <div className="space-y-2">
               <div className="flex justify-center bg-gray-50 rounded-xl p-3" ref={barcodeRef}>
-                <Barcode value={showStruk.barcode || showStruk.kode_transaksi} width={1.5} height={45} fontSize={11} margin={5} displayValue={true} />
+                <Barcode value={String(strukId)} width={1.5} height={45} fontSize={11} margin={5} displayValue={true} />
               </div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Kode</span><span className="font-mono font-bold">{showStruk.kode_transaksi}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Kode</span><span className="font-mono font-bold">PKR-{strukId}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Plat Nomor</span><span className="font-bold">{showStruk.plat_nomor}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Jenis</span><span>{showStruk.jenis_kendaraan}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Warna</span><span>{showStruk.warna}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Area</span><span>{showStruk.area_parkir}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Tarif</span><span>{formatRupiah(showStruk.tarif_per_jam)}/jam</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Masuk</span><span>{formatDate(showStruk.waktu_masuk)}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Keluar</span><span>{formatDate(showStruk.waktu_keluar)}</span></div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Durasi</span><span>{showStruk.durasi_menit ? `${Math.floor(showStruk.durasi_menit/60)}j ${showStruk.durasi_menit%60}m` : '-'}</span></div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Pembayaran</span><span className="capitalize">{showStruk.metode_pembayaran || '-'}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Durasi</span><span>{showStruk.durasi_jam ? `${showStruk.durasi_jam} jam` : '-'}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Petugas</span><span>{showStruk.petugas}</span></div>
-              {showStruk.total_biaya && (
+              {showStruk.biaya_total ? (
                 <div className="flex justify-between p-3.5 bg-emerald-50 rounded-xl">
                   <span className="text-emerald-600 font-semibold text-sm">Total Biaya</span>
-                  <span className="font-bold text-emerald-700 text-lg">{formatRupiah(showStruk.total_biaya)}</span>
+                  <span className="font-bold text-emerald-700 text-lg">{formatRupiah(showStruk.biaya_total)}</span>
                 </div>
-              )}
-              {!showStruk.total_biaya && (
+              ) : (
                 <div className="p-3.5 bg-blue-50 rounded-xl text-center text-blue-700 font-semibold text-sm">Kendaraan Masih Parkir</div>
               )}
             </div>

@@ -48,17 +48,16 @@ export default function Rekap() {
 
   const handleExportCSV = () => {
     if (!data?.transaksis?.length) return
-    const headers = ['Kode', 'Plat Nomor', 'Jenis', 'Area', 'Masuk', 'Keluar', 'Durasi (menit)', 'Biaya', 'Pembayaran']
+    const headers = ['Kode', 'Plat Nomor', 'Jenis', 'Area', 'Masuk', 'Keluar', 'Durasi (jam)', 'Biaya']
     const rows = data.transaksis.map(t => [
-      t.kode_transaksi,
+      `PKR-${t.id_parkir}`,
       t.kendaraan?.plat_nomor,
       t.kendaraan?.jenis_kendaraan,
       t.area_parkir?.nama_area,
       t.waktu_masuk,
       t.waktu_keluar,
-      t.durasi_menit,
-      t.total_biaya,
-      t.metode_pembayaran,
+      t.durasi_jam,
+      t.biaya_total,
     ])
     const csv = [headers, ...rows].map(r => r.join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
@@ -221,24 +220,24 @@ export default function Rekap() {
                     <th className="px-6 py-3.5">Kode</th>
                     <th className="px-6 py-3.5">Plat Nomor</th>
                     <th className="px-6 py-3.5">Jenis</th>
+                    <th className="px-6 py-3.5">Area</th>
                     <th className="px-6 py-3.5">Masuk</th>
                     <th className="px-6 py-3.5">Keluar</th>
                     <th className="px-6 py-3.5">Durasi</th>
                     <th className="px-6 py-3.5">Biaya</th>
-                    <th className="px-6 py-3.5">Pembayaran</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {(data.transaksis || []).slice(0, 50).map((t) => (
-                    <tr key={t.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 text-xs font-mono text-gray-500">{t.kode_transaksi}</td>
+                    <tr key={t.id_parkir} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-xs font-mono text-gray-500">PKR-{t.id_parkir}</td>
                       <td className="px-6 py-4 text-sm font-bold text-gray-900">{t.kendaraan?.plat_nomor}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{t.kendaraan?.jenis_kendaraan}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{t.area_parkir?.nama_area}</td>
                       <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_masuk)}</td>
                       <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_keluar)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{t.durasi_menit ? `${Math.floor(t.durasi_menit/60)}j ${t.durasi_menit%60}m` : '-'}</td>
-                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{formatRupiah(t.total_biaya)}</td>
-                      <td className="px-6 py-4 text-sm capitalize text-gray-600">{t.metode_pembayaran}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{t.durasi_jam ? `${t.durasi_jam} jam` : '-'}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{formatRupiah(t.biaya_total)}</td>
                     </tr>
                   ))}
                 </tbody>
