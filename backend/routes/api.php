@@ -67,4 +67,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // AI Chatbot - Cek Biaya & Slot Parkir (All authenticated users)
     Route::post('/chatbot', [ChatbotController::class, 'chat']);
+    Route::post('/chatbot/scan-image', [ChatbotController::class, 'scanImage']);
 });

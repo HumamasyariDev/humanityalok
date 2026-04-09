@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" agent="OpenCode" version="26.0.0" type="device">
+  <diagram id="flowchart-petugas" name="Flowchart Petugas SmartPark">
+    <mxGraphModel dx="1100" dy="760" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="Flowchart Alur Kerja Petugas" style="text;align=center;fontStyle=1;fontSize=16;fontColor=#000000;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="214" y="15" width="400" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n1" value="Mulai" style="ellipse;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="354" y="60" width="120" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n2" value="Login sebagai Petugas&#xa;(Username &amp; Password)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="319" y="150" width="190" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n1" target="n2" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n3" value="Masuk Dashboard Petugas" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="314" y="245" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n2" target="n3" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n4" value="Pilih Menu?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="349" y="340" width="130" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n3" target="n4" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n5a" value="Kelola Kendaraan&#xa;(Tambah, Edit, Hapus&#xa;Data Kendaraan)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="60" y="510" width="170" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n5b" value="Transaksi Masuk&#xa;(Input Plat Nomor,&#xa;Jenis, Area Parkir)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="510" width="170" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n5c" value="Daftar Transaksi&#xa;(Lihat Riwayat,&#xa;Cetak Struk)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="460" y="510" width="170" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n5d" value="Transaksi Keluar&#xa;(Scan Barcode /&#xa;Input Kode PKR)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="660" y="510" width="170" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e4a" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n4" target="n5a" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e4b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n4" target="n5b" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e4c" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n4" target="n5c" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="545" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e4d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n4" target="n5d" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="n6b" value="Cetak Kartu Parkir&#xa;(Barcode PKR-XXXXXX)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="260" y="610" width="170" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e5b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n5b" target="n6b" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n6d" value="Hitung Biaya Parkir&#xa;(Pembulatan ke atas per jam)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="645" y="610" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e5d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n5d" target="n6d" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n7d" value="Proses Pembayaran" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="680" y="700" width="150" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e6d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n6d" target="n7d" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n8d" value="Cetak Struk Parkir&#xa;(Total Biaya + Barcode)" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="655" y="785" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e7d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n7d" target="n8d" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n9" value="Pilih Menu Lain?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="349" y="880" width="130" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e8a" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n5a" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="850"/>
+              <mxPoint x="414" y="850"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8b" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n6b" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="850"/>
+              <mxPoint x="414" y="850"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8c" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n5c" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="545" y="850"/>
+              <mxPoint x="414" y="850"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e8d" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n8d" target="n9" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="755" y="850"/>
+              <mxPoint x="414" y="850"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e9_ya" value="Ya" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n9" target="n4" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="190" y="925"/>
+              <mxPoint x="190" y="385"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="n10" value="Menggunakan&#xa;AI Chatbot?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="349" y="1030" width="130" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e9_tidak" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n9" target="n10" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n11" value="Input Data ke Chatbot&#xa;(Ketik Pesan / Kamera /&#xa;Upload Gambar Struk)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="530" y="1040" width="210" height="65" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e10_ya" value="Ya" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n10" target="n11" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n12" value="AI Proses &amp; Tampilkan&#xa;Respon + Parking Card&#xa;+ Barcode" style="rounded=0;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="545" y="1150" width="180" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e11" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n11" target="n12" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="n13" value="Logout?" style="rhombus;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="349" y="1280" width="130" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e12_tidak" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n10" target="n13" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e12_chatbot" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;" edge="1" source="n12" target="n13" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="635" y="1250"/>
+              <mxPoint x="414" y="1250"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="e13_tidak" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n13" target="n3" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="1325"/>
+              <mxPoint x="140" y="270"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="n14" value="Selesai" style="ellipse;whiteSpace=wrap;fillColor=#FFFFFF;strokeColor=#000000;fontColor=#000000;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="354" y="1420" width="120" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e13_ya" value="Ya" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#000000;fontColor=#000000;fontSize=11;" edge="1" source="n13" target="n14" parent="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="subtitle" value="SmartPark - Sistem Manajemen Parkir Terintegrasi" style="text;align=center;fontStyle=2;fontSize=10;fontColor=#666666;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+          <mxGeometry x="254" y="1480" width="320" height="20" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
