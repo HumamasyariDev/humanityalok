@@ -305,6 +305,67 @@ POST   /api/chatbot             # Kirim pesan ke AI chatbot (semua role)
 | Mobil | Rp 5.000 |
 | Lainnya | Rp 10.000 |
 
+## Konfigurasi AI Chatbot (NVIDIA API)
+
+Fitur AI Chatbot menggunakan **NVIDIA AI API** (model Meta Llama 3.1 8B). Agar chatbot bisa digunakan, Anda perlu mendapatkan API key dari NVIDIA secara **gratis**.
+
+### Langkah 1: Buat Akun NVIDIA
+
+1. Buka [https://build.nvidia.com](https://build.nvidia.com)
+2. Klik **"Sign In"** di pojok kanan atas
+3. Daftar akun baru (bisa pakai email Google) atau login jika sudah punya akun
+4. Verifikasi email jika diminta
+
+### Langkah 2: Dapatkan API Key
+
+1. Setelah login, buka halaman model: [https://build.nvidia.com/meta/llama-3_1-8b-instruct](https://build.nvidia.com/meta/llama-3_1-8b-instruct)
+2. Di panel sebelah kanan, klik tombol **"Get API Key"**
+3. Klik **"Generate Key"**
+4. Salin API key yang muncul (formatnya: `nvapi-xxxxxxxxxxxx...`)
+
+> **Catatan:** NVIDIA memberikan **1.000 request gratis** untuk akun baru. Cukup untuk testing dan demo.
+
+### Langkah 3: Pasang API Key di Project
+
+1. Buka file `backend/.env`
+2. Tambahkan atau ubah baris berikut:
+
+```env
+NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+3. Ganti `nvapi-xxx...` dengan API key yang sudah Anda salin
+4. Simpan file `.env`
+5. Restart backend server:
+
+```bash
+cd backend
+php artisan serve
+```
+
+### Langkah 4: Test Chatbot
+
+1. Login ke aplikasi SmartPark
+2. Klik ikon chat (bubble) di pojok kanan bawah halaman
+3. Ketik pertanyaan, contoh:
+   - *"Berapa tarif parkir motor?"*
+   - *"Ada slot kosong di area mana?"*
+   - *"Estimasi biaya mobil 3 jam?"*
+4. Chatbot akan menjawab berdasarkan data parkir real-time dari database
+
+### Troubleshooting
+
+| Masalah | Solusi |
+|---|---|
+| Chatbot menjawab "layanan AI tidak tersedia" | Pastikan `NVIDIA_API_KEY` sudah benar di file `.env` |
+| Response lambat | NVIDIA API kadang butuh 5-10 detik, ini normal |
+| Error 401 Unauthorized | API key salah atau expired, generate ulang di NVIDIA |
+| Error 429 Too Many Requests | Kuota gratis habis, tunggu reset atau buat akun baru |
+
+### Alternatif Tanpa API Key
+
+Jika tidak ingin menggunakan NVIDIA API, chatbot akan tetap muncul di halaman tetapi akan menampilkan pesan error saat digunakan. Fitur lainnya (transaksi, rekap, dll) tetap berjalan normal tanpa API key.
+
 ## Design System
 
 Aplikasi menggunakan design language yang konsisten di semua halaman:
