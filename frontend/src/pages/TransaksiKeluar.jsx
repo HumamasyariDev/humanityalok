@@ -20,7 +20,10 @@ export default function TransaksiKeluar() {
     setTransaksi(null)
     setResult(null)
     try {
-      const res = await api.post('/transaksi/scan-barcode', { barcode: barcode.trim() })
+      // Strip PKR- prefix if scanned from formatted barcode, extract numeric id
+      const raw = barcode.trim()
+      const barcodeValue = raw.replace(/^PKR-0*/i, '') || raw
+      const res = await api.post('/transaksi/scan-barcode', { barcode: barcodeValue })
       if (res.data.data.status === 'keluar') {
         toast.error('Transaksi ini sudah selesai!')
         return
@@ -214,7 +217,7 @@ export default function TransaksiKeluar() {
               </div>
 
               <div className="flex justify-center bg-white rounded-xl p-3 mt-4" ref={barcodeRef}>
-                <Barcode value={String(result.id_parkir)} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
+                <Barcode value={`PKR-${String(result.id_parkir).padStart(6, '0')}`} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
               </div>
 
               <div className="text-center mt-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10">

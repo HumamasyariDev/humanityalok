@@ -227,7 +227,7 @@ export default function TransaksiList() {
             </div>
             <div className="space-y-2">
               <div className="flex justify-center bg-gray-50 rounded-xl p-3" ref={barcodeRef}>
-                <Barcode value={String(strukId)} width={1.5} height={45} fontSize={11} margin={5} displayValue={true} />
+                <Barcode value={`PKR-${String(strukId).padStart(6, '0')}`} width={1.5} height={45} fontSize={11} margin={5} displayValue={true} />
               </div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Kode</span><span className="font-mono font-bold">PKR-{strukId}</span></div>
               <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Plat Nomor</span><span className="font-bold">{showStruk.plat_nomor}</span></div>

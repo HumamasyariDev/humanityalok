@@ -185,7 +185,7 @@ export default function TransaksiMasuk() {
                   <p className="text-lg font-bold tracking-wider">PKR-{String(result.id_parkir).padStart(6, '0')}</p>
                 </div>
                 <div className="flex justify-center bg-white rounded-xl p-3" ref={barcodeRef}>
-                  <Barcode value={String(result.id_parkir)} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
+                  <Barcode value={`PKR-${String(result.id_parkir).padStart(6, '0')}`} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
                 </div>
               </div>
 
