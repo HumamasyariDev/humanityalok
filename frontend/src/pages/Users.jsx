@@ -51,7 +51,7 @@ export default function Users() {
       if (editing) {
         const payload = { ...form }
         if (!payload.password) delete payload.password
-        await api.put(`/users/${editing.id}`, payload)
+        await api.put(`/users/${editing.id_user}`, payload)
         toast.success('User berhasil diupdate')
       } else {
         await api.post('/users', form)
@@ -67,7 +67,7 @@ export default function Users() {
   const handleDelete = async () => {
     if (!deleteTarget) return
     try {
-      await api.delete(`/users/${deleteTarget.id}`)
+      await api.delete(`/users/${deleteTarget.id_user}`)
       toast.success('User berhasil dihapus')
       setDeleteTarget(null)
       fetchUsers()
@@ -140,7 +140,7 @@ export default function Users() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {users.map((user, i) => (
-                <tr key={user.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={user.id_user} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4 text-sm text-gray-400">{(pagination.current_page - 1) * 10 + i + 1}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">

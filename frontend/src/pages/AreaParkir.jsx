@@ -9,7 +9,7 @@ export default function AreaParkir() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ kode_area: '', nama_area: '', kapasitas: '', status: 'aktif' })
+  const [form, setForm] = useState({ nama_area: '', kapasitas: '' })
   const [deleteTarget, setDeleteTarget] = useState(null)
 
   useEffect(() => { fetchAreas() }, [])
@@ -17,7 +17,7 @@ export default function AreaParkir() {
   const fetchAreas = async () => {
     try {
       const res = await api.get('/area-parkir', { params: { per_page: 50 } })
-      setAreas(res.data.data.data)
+      setAreas(res.data.data.data || [])
     } catch (err) {
       toast.error('Gagal memuat data area')
     } finally {
@@ -27,13 +27,13 @@ export default function AreaParkir() {
 
   const openCreate = () => {
     setEditing(null)
-    setForm({ kode_area: '', nama_area: '', kapasitas: '', status: 'aktif' })
+    setForm({ nama_area: '', kapasitas: '' })
     setShowModal(true)
   }
 
   const openEdit = (area) => {
     setEditing(area)
-    setForm({ kode_area: area.kode_area, nama_area: area.nama_area, kapasitas: area.kapasitas, status: area.status })
+    setForm({ nama_area: area.nama_area, kapasitas: area.kapasitas })
     setShowModal(true)
   }
 
@@ -41,7 +41,7 @@ export default function AreaParkir() {
     e.preventDefault()
     try {
       if (editing) {
-        await api.put(`/area-parkir/${editing.id}`, form)
+        await api.put(`/area-parkir/${editing.id_area}`, form)
         toast.success('Area berhasil diupdate')
       } else {
         await api.post('/area-parkir', form)
@@ -57,7 +57,7 @@ export default function AreaParkir() {
   const handleDelete = async () => {
     if (!deleteTarget) return
     try {
-      await api.delete(`/area-parkir/${deleteTarget.id}`)
+      await api.delete(`/area-parkir/${deleteTarget.id_area}`)
       toast.success('Area berhasil dihapus')
       setDeleteTarget(null)
       fetchAreas()
@@ -95,17 +95,16 @@ export default function AreaParkir() {
           const percentage = area.kapasitas > 0 ? (area.terisi / area.kapasitas) * 100 : 0
           const color = percentage >= 90 ? 'text-red-600' : percentage >= 70 ? 'text-amber-600' : 'text-emerald-600'
           const bgColor = percentage >= 90 ? 'bg-red-500' : percentage >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
-          const isActive = area.status === 'aktif'
           return (
-            <div key={area.id} className="card hover:shadow-md transition-all duration-200">
+            <div key={area.id_area} className="card hover:shadow-md transition-all duration-200">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${isActive ? 'bg-blue-100' : 'bg-gray-100'}`}>
-                    <FiMapPin className={isActive ? 'text-blue-600' : 'text-gray-400'} size={20} />
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-blue-100">
+                    <FiMapPin className="text-blue-600" size={20} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900">{area.kode_area}</h3>
-                    <p className="text-sm text-gray-500">{area.nama_area}</p>
+                    <h3 className="font-bold text-gray-900">{area.nama_area}</h3>
+                    <p className="text-sm text-gray-500">Kapasitas: {area.kapasitas} slot</p>
                   </div>
                 </div>
                 <div className="flex gap-1">
@@ -122,8 +121,8 @@ export default function AreaParkir() {
                   <div className={`${bgColor} h-2.5 rounded-full transition-all duration-500`} style={{ width: `${Math.min(percentage, 100)}%` }}></div>
                 </div>
                 <div className="flex justify-between mt-3">
-                  <span className={`badge ${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
-                    {area.status.toUpperCase()}
+                  <span className={`badge ${percentage >= 100 ? 'bg-red-100 text-red-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                    {percentage >= 100 ? 'PENUH' : 'TERSEDIA'}
                   </span>
                   <span className="text-xs text-gray-400">Sisa: {area.kapasitas - area.terisi} slot</span>
                 </div>
@@ -153,19 +152,6 @@ export default function AreaParkir() {
               <button onClick={() => setShowModal(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors"><FiX size={20} className="text-gray-400" /></button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="label-field">Kode Area</label>
-                  <input type="text" value={form.kode_area} onChange={(e) => setForm({...form, kode_area: e.target.value})} className="input-field" placeholder="A1, B2..." required />
-                </div>
-                <div>
-                  <label className="label-field">Status</label>
-                  <select value={form.status} onChange={(e) => setForm({...form, status: e.target.value})} className="input-field">
-                    <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
-                  </select>
-                </div>
-              </div>
               <div>
                 <label className="label-field">Nama Area</label>
                 <input type="text" value={form.nama_area} onChange={(e) => setForm({...form, nama_area: e.target.value})} className="input-field" placeholder="Nama area parkir" required />

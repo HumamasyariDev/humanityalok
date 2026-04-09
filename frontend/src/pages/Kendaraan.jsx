@@ -10,7 +10,7 @@ export default function Kendaraan() {
   const [search, setSearch] = useState('')
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ plat_nomor: '', jenis_kendaraan: '', merk: '', warna: '', pemilik: '' })
+  const [form, setForm] = useState({ plat_nomor: '', jenis_kendaraan: '', warna: '', pemilik: '' })
   const [pagination, setPagination] = useState({})
   const [deleteTarget, setDeleteTarget] = useState(null)
 
@@ -19,7 +19,7 @@ export default function Kendaraan() {
   const fetchKendaraans = async (page = 1) => {
     try {
       const res = await api.get('/kendaraan', { params: { page, search, per_page: 10 } })
-      setKendaraans(res.data.data.data)
+      setKendaraans(res.data.data.data || [])
       setPagination(res.data.data)
     } catch (err) {
       toast.error('Gagal memuat data kendaraan')
@@ -35,13 +35,13 @@ export default function Kendaraan() {
 
   const openCreate = () => {
     setEditing(null)
-    setForm({ plat_nomor: '', jenis_kendaraan: '', merk: '', warna: '', pemilik: '' })
+    setForm({ plat_nomor: '', jenis_kendaraan: '', warna: '', pemilik: '' })
     setShowModal(true)
   }
 
   const openEdit = (k) => {
     setEditing(k)
-    setForm({ plat_nomor: k.plat_nomor, jenis_kendaraan: k.jenis_kendaraan, merk: k.merk || '', warna: k.warna || '', pemilik: k.pemilik || '' })
+    setForm({ plat_nomor: k.plat_nomor, jenis_kendaraan: k.jenis_kendaraan, warna: k.warna || '', pemilik: k.pemilik || '' })
     setShowModal(true)
   }
 
@@ -49,7 +49,7 @@ export default function Kendaraan() {
     e.preventDefault()
     try {
       if (editing) {
-        await api.put(`/kendaraan/${editing.id}`, form)
+        await api.put(`/kendaraan/${editing.id_kendaraan}`, form)
         toast.success('Kendaraan berhasil diupdate')
       } else {
         await api.post('/kendaraan', form)
@@ -65,7 +65,7 @@ export default function Kendaraan() {
   const handleDelete = async () => {
     if (!deleteTarget) return
     try {
-      await api.delete(`/kendaraan/${deleteTarget.id}`)
+      await api.delete(`/kendaraan/${deleteTarget.id_kendaraan}`)
       toast.success('Kendaraan berhasil dihapus')
       setDeleteTarget(null)
       fetchKendaraans()
@@ -102,7 +102,7 @@ export default function Kendaraan() {
         <form onSubmit={handleSearch} className="flex gap-3">
           <div className="relative flex-1">
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari plat nomor, merk, pemilik..." className="input-field pl-11" />
+            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari plat nomor, pemilik..." className="input-field pl-11" />
           </div>
           <button type="submit" className="btn-primary">Cari</button>
         </form>
@@ -117,7 +117,6 @@ export default function Kendaraan() {
                 <th className="px-6 py-3.5">No</th>
                 <th className="px-6 py-3.5">Plat Nomor</th>
                 <th className="px-6 py-3.5">Jenis</th>
-                <th className="px-6 py-3.5">Merk</th>
                 <th className="px-6 py-3.5">Warna</th>
                 <th className="px-6 py-3.5">Pemilik</th>
                 <th className="px-6 py-3.5">Aksi</th>
@@ -125,7 +124,7 @@ export default function Kendaraan() {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {kendaraans.map((k, i) => (
-                <tr key={k.id} className="hover:bg-gray-50/50 transition-colors">
+                <tr key={k.id_kendaraan} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4 text-sm text-gray-400">{(pagination.current_page - 1) * 10 + i + 1}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -136,7 +135,6 @@ export default function Kendaraan() {
                     </div>
                   </td>
                   <td className="px-6 py-4"><span className="badge bg-gray-100 text-gray-700">{k.jenis_kendaraan}</span></td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{k.merk || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{k.warna || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-600">{k.pemilik || '-'}</td>
                   <td className="px-6 py-4">
@@ -149,7 +147,7 @@ export default function Kendaraan() {
               ))}
               {kendaraans.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-gray-400">
+                  <td colSpan="6" className="px-6 py-12 text-center text-gray-400">
                     <FiTruck className="mx-auto mb-2" size={28} />
                     <p className="text-sm">Tidak ada data kendaraan</p>
                   </td>
@@ -192,25 +190,20 @@ export default function Kendaraan() {
                 <label className="label-field">Jenis Kendaraan</label>
                 <select value={form.jenis_kendaraan} onChange={(e) => setForm({...form, jenis_kendaraan: e.target.value})} className="input-field" required>
                   <option value="">Pilih Jenis</option>
-                  <option value="Motor">Motor</option>
-                  <option value="Mobil">Mobil</option>
-                  <option value="Truk">Truk</option>
-                  <option value="Bus">Bus</option>
+                  <option value="motor">Motor</option>
+                  <option value="mobil">Mobil</option>
+                  <option value="lainnya">Lainnya</option>
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="label-field">Merk</label>
-                  <input type="text" value={form.merk} onChange={(e) => setForm({...form, merk: e.target.value})} className="input-field" placeholder="Honda, Toyota..." />
-                </div>
-                <div>
                   <label className="label-field">Warna</label>
                   <input type="text" value={form.warna} onChange={(e) => setForm({...form, warna: e.target.value})} className="input-field" placeholder="Hitam, Putih..." />
                 </div>
-              </div>
-              <div>
-                <label className="label-field">Pemilik</label>
-                <input type="text" value={form.pemilik} onChange={(e) => setForm({...form, pemilik: e.target.value})} className="input-field" placeholder="Nama pemilik" />
+                <div>
+                  <label className="label-field">Pemilik</label>
+                  <input type="text" value={form.pemilik} onChange={(e) => setForm({...form, pemilik: e.target.value})} className="input-field" placeholder="Nama pemilik" />
+                </div>
               </div>
               <div className="flex gap-3 pt-3">
                 <button type="button" onClick={() => setShowModal(false)} className="btn-secondary flex-1 justify-center">Batal</button>
