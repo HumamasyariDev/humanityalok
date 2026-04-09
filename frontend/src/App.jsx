@@ -13,17 +13,29 @@ import TransaksiList from './pages/TransaksiList'
 import Rekap from './pages/Rekap'
 import LogAktivitas from './pages/LogAktivitas'
 
+function LoadingScreen() {
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-700 via-blue-800 to-indigo-900">
+      <div className="text-center">
+        <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-2xl mx-auto mb-5">
+          <span className="text-3xl font-extrabold bg-gradient-to-br from-blue-600 to-indigo-600 bg-clip-text text-transparent">P</span>
+        </div>
+        <h1 className="text-2xl font-bold text-white tracking-tight">SmartPark</h1>
+        <p className="text-blue-200/70 text-sm mt-1">Sistem Manajemen Parkir</p>
+        <div className="flex items-center justify-center gap-1.5 mt-8">
+          <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+          <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+          <div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ProtectedRoute({ children, roles }) {
   const { user, loading } = useAuth()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
+  if (loading) return <LoadingScreen />
   if (!user) return <Navigate to="/login" />
   if (roles && !roles.includes(user.role)) return <Navigate to="/" />
 
@@ -33,13 +45,7 @@ function ProtectedRoute({ children, roles }) {
 function App() {
   const { user, loading } = useAuth()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
+  if (loading) return <LoadingScreen />
 
   return (
     <Routes>

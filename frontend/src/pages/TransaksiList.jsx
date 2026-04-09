@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../lib/api'
 import toast from 'react-hot-toast'
-import { FiSearch, FiEye, FiClock, FiPrinter, FiX } from 'react-icons/fi'
+import { FiSearch, FiEye, FiClock, FiPrinter, FiX, FiList } from 'react-icons/fi'
 import Barcode from 'react-barcode'
 
 export default function TransaksiList() {
@@ -97,91 +97,111 @@ export default function TransaksiList() {
   const formatDate = (d) => d ? new Date(d).toLocaleString('id-ID') : '-'
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-blue-600 border-t-transparent mx-auto"></div>
+          <p className="text-sm text-gray-400 mt-4">Memuat data...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Daftar Transaksi</h1>
-        <p className="text-gray-500 mt-1">Riwayat semua transaksi parkir</p>
+        <p className="text-sm font-medium text-blue-600 mb-1">Transaksi</p>
+        <h1 className="page-title">Daftar Transaksi</h1>
+        <p className="page-subtitle">Riwayat semua transaksi parkir</p>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[300px]">
-          <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kode transaksi atau plat nomor..." className="input-field pl-10" />
+      {/* Filters */}
+      <div className="card">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSearch} className="flex gap-3 flex-1">
+            <div className="relative flex-1">
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kode transaksi atau plat nomor..." className="input-field pl-11" />
+            </div>
+            <button type="submit" className="btn-primary">Cari</button>
+          </form>
+          <div className="flex gap-1.5">
+            {['', 'parkir', 'selesai'].map((s) => (
+              <button
+                key={s}
+                onClick={() => setStatus(s)}
+                className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                  status === s
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20'
+                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                {s === '' ? 'Semua' : s === 'parkir' ? 'Parkir' : 'Selesai'}
+              </button>
+            ))}
           </div>
-          <button type="submit" className="btn-primary">Cari</button>
-        </form>
-        <div className="flex gap-2">
-          {['', 'parkir', 'selesai'].map((s) => (
-            <button
-              key={s}
-              onClick={() => setStatus(s)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                status === s ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              {s === '' ? 'Semua' : s === 'parkir' ? 'Sedang Parkir' : 'Selesai'}
-            </button>
-          ))}
         </div>
       </div>
 
+      {/* Table */}
       <div className="card p-0">
-        <div className="table-container">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="table-header">
-                <th className="px-4 py-3">Kode</th>
-                <th className="px-4 py-3">Plat Nomor</th>
-                <th className="px-4 py-3">Jenis</th>
-                <th className="px-4 py-3">Area</th>
-                <th className="px-4 py-3">Masuk</th>
-                <th className="px-4 py-3">Keluar</th>
-                <th className="px-4 py-3">Biaya</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Aksi</th>
+                <th className="px-6 py-3.5">Kode</th>
+                <th className="px-6 py-3.5">Plat Nomor</th>
+                <th className="px-6 py-3.5">Jenis</th>
+                <th className="px-6 py-3.5">Area</th>
+                <th className="px-6 py-3.5">Masuk</th>
+                <th className="px-6 py-3.5">Keluar</th>
+                <th className="px-6 py-3.5">Biaya</th>
+                <th className="px-6 py-3.5">Status</th>
+                <th className="px-6 py-3.5">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-50">
               {transaksis.map((t) => (
-                <tr key={t.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-xs font-mono">{t.kode_transaksi}</td>
-                  <td className="px-4 py-3 text-sm font-bold text-blue-700">{t.kendaraan?.plat_nomor}</td>
-                  <td className="px-4 py-3 text-sm">{t.kendaraan?.jenis_kendaraan}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{t.area_parkir?.nama_area}</td>
-                  <td className="px-4 py-3 text-xs text-gray-600">{formatDate(t.waktu_masuk)}</td>
-                  <td className="px-4 py-3 text-xs text-gray-600">{formatDate(t.waktu_keluar)}</td>
-                  <td className="px-4 py-3 text-sm font-semibold">{t.total_biaya ? formatRupiah(t.total_biaya) : '-'}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      t.status === 'parkir' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
+                <tr key={t.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 text-xs font-mono text-gray-500">{t.kode_transaksi}</td>
+                  <td className="px-6 py-4 text-sm font-bold text-gray-900">{t.kendaraan?.plat_nomor}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{t.kendaraan?.jenis_kendaraan}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{t.area_parkir?.nama_area}</td>
+                  <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_masuk)}</td>
+                  <td className="px-6 py-4 text-xs text-gray-500">{formatDate(t.waktu_keluar)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">{t.total_biaya ? formatRupiah(t.total_biaya) : '-'}</td>
+                  <td className="px-6 py-4">
+                    <span className={`badge ${
+                      t.status === 'parkir' || t.status === 'masuk' ? 'bg-blue-100 text-blue-700' : 'bg-emerald-100 text-emerald-700'
                     }`}>
-                      {t.status === 'parkir' ? 'Parkir' : 'Selesai'}
+                      {t.status === 'parkir' || t.status === 'masuk' ? 'Parkir' : 'Selesai'}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <button onClick={() => viewStruk(t.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Lihat Struk">
-                      <FiEye size={16} />
+                  <td className="px-6 py-4">
+                    <button onClick={() => viewStruk(t.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" title="Lihat Struk">
+                      <FiEye size={15} />
                     </button>
                   </td>
                 </tr>
               ))}
               {transaksis.length === 0 && (
-                <tr><td colSpan="9" className="px-4 py-8 text-center text-gray-400">Tidak ada data transaksi</td></tr>
+                <tr>
+                  <td colSpan="9" className="px-6 py-12 text-center text-gray-400">
+                    <FiList className="mx-auto mb-2" size={28} />
+                    <p className="text-sm">Tidak ada data transaksi</p>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
         {pagination.last_page > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
             <p className="text-sm text-gray-500">Halaman {pagination.current_page} dari {pagination.last_page}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(page => (
-                <button key={page} onClick={() => fetchTransaksis(page)} className={`px-3 py-1 rounded-lg text-sm ${page === pagination.current_page ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>{page}</button>
+                <button key={page} onClick={() => fetchTransaksis(page)} className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === pagination.current_page ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>{page}</button>
               ))}
             </div>
           </div>
@@ -190,43 +210,38 @@ export default function TransaksiList() {
 
       {/* Struk Modal */}
       {showStruk && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold">Detail Struk</h3>
-              <button onClick={() => setShowStruk(null)} className="p-2 hover:bg-gray-100 rounded-lg"><FiX size={20} /></button>
+        <div className="modal-overlay">
+          <div className="modal-content max-w-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-lg font-bold text-gray-900">Detail Struk</h3>
+              <button onClick={() => setShowStruk(null)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+                <FiX size={18} className="text-gray-400" />
+              </button>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-center bg-gray-50 rounded-lg p-3" ref={barcodeRef}>
-                <Barcode
-                  value={showStruk.barcode || showStruk.kode_transaksi}
-                  width={1.5}
-                  height={45}
-                  fontSize={11}
-                  margin={5}
-                  displayValue={true}
-                />
+            <div className="space-y-2">
+              <div className="flex justify-center bg-gray-50 rounded-xl p-3" ref={barcodeRef}>
+                <Barcode value={showStruk.barcode || showStruk.kode_transaksi} width={1.5} height={45} fontSize={11} margin={5} displayValue={true} />
               </div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Kode</span><span className="font-mono font-bold">{showStruk.kode_transaksi}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Plat Nomor</span><span className="font-bold">{showStruk.plat_nomor}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Jenis</span><span>{showStruk.jenis_kendaraan}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Area</span><span>{showStruk.area_parkir}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Masuk</span><span>{formatDate(showStruk.waktu_masuk)}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Keluar</span><span>{formatDate(showStruk.waktu_keluar)}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Durasi</span><span>{showStruk.durasi_menit ? `${Math.floor(showStruk.durasi_menit/60)}j ${showStruk.durasi_menit%60}m` : '-'}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Pembayaran</span><span className="capitalize">{showStruk.metode_pembayaran || '-'}</span></div>
-              <div className="flex justify-between p-2 bg-gray-50 rounded"><span className="text-gray-500">Petugas</span><span>{showStruk.petugas}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Kode</span><span className="font-mono font-bold">{showStruk.kode_transaksi}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Plat Nomor</span><span className="font-bold">{showStruk.plat_nomor}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Jenis</span><span>{showStruk.jenis_kendaraan}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Area</span><span>{showStruk.area_parkir}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Masuk</span><span>{formatDate(showStruk.waktu_masuk)}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Keluar</span><span>{formatDate(showStruk.waktu_keluar)}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Durasi</span><span>{showStruk.durasi_menit ? `${Math.floor(showStruk.durasi_menit/60)}j ${showStruk.durasi_menit%60}m` : '-'}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Pembayaran</span><span className="capitalize">{showStruk.metode_pembayaran || '-'}</span></div>
+              <div className="flex justify-between p-3 bg-gray-50 rounded-xl text-sm"><span className="text-gray-500">Petugas</span><span>{showStruk.petugas}</span></div>
               {showStruk.total_biaya && (
-                <div className="flex justify-between p-3 bg-emerald-50 rounded-lg">
-                  <span className="text-emerald-600 font-medium">Total Biaya</span>
+                <div className="flex justify-between p-3.5 bg-emerald-50 rounded-xl">
+                  <span className="text-emerald-600 font-semibold text-sm">Total Biaya</span>
                   <span className="font-bold text-emerald-700 text-lg">{formatRupiah(showStruk.total_biaya)}</span>
                 </div>
               )}
               {!showStruk.total_biaya && (
-                <div className="p-3 bg-blue-50 rounded-lg text-center text-blue-700 font-medium">Kendaraan Masih Parkir</div>
+                <div className="p-3.5 bg-blue-50 rounded-xl text-center text-blue-700 font-semibold text-sm">Kendaraan Masih Parkir</div>
               )}
             </div>
-            <button onClick={printStruk} className="w-full btn-primary justify-center mt-4">
+            <button onClick={printStruk} className="w-full btn-primary justify-center mt-5">
               <FiPrinter size={16} /> Cetak Struk
             </button>
           </div>

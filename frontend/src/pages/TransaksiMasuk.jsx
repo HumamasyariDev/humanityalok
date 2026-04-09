@@ -85,17 +85,25 @@ export default function TransaksiMasuk() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Kendaraan Masuk</h1>
-        <p className="text-gray-500 mt-1">Catat kendaraan masuk area parkir</p>
+        <p className="text-sm font-medium text-blue-600 mb-1">Transaksi</p>
+        <h1 className="page-title">Kendaraan Masuk</h1>
+        <p className="page-subtitle">Catat kendaraan yang masuk area parkir</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Form */}
         <div className="card">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-            <FiTruck className="text-blue-600" /> Data Kendaraan Masuk
-          </h3>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+              <FiTruck className="text-blue-600" size={18} />
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900">Data Kendaraan</h3>
+              <p className="text-xs text-gray-400">Isi data kendaraan yang masuk</p>
+            </div>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label-field">Plat Nomor *</label>
@@ -118,7 +126,7 @@ export default function TransaksiMasuk() {
                     onClick={() => setForm({...form, jenis_kendaraan: t.jenis_kendaraan})}
                     className={`p-3 rounded-xl border-2 text-sm font-medium transition-all ${
                       form.jenis_kendaraan === t.jenis_kendaraan
-                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-500/10'
                         : 'border-gray-200 hover:border-gray-300 text-gray-600'
                     }`}
                   >
@@ -155,7 +163,7 @@ export default function TransaksiMasuk() {
             </div>
             <button type="submit" disabled={loading} className="w-full btn-success justify-center py-3 text-base">
               {loading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
               ) : (
                 <><FiCheck size={18} /> Proses Masuk</>
               )}
@@ -163,69 +171,44 @@ export default function TransaksiMasuk() {
           </form>
         </div>
 
-        {/* Parking Card / Ticket Result */}
+        {/* Parking Card Result */}
         {result && (
           <div>
-            <div className="card bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
+            <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 rounded-2xl p-6 text-white shadow-xl shadow-blue-600/20">
               <div className="text-center mb-4">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                <div className="w-12 h-12 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
                   <span className="text-2xl font-bold">P</span>
                 </div>
                 <h3 className="text-xl font-bold">KARTU PARKIR</h3>
                 <p className="text-blue-200 text-sm">SmartPark System</p>
               </div>
 
-              <div className="bg-white/10 rounded-xl p-4 space-y-3">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-3 border border-white/10">
                 <div className="text-center">
-                  <p className="text-blue-200 text-xs">KODE TRANSAKSI</p>
+                  <p className="text-blue-200 text-xs uppercase tracking-wider">Kode Transaksi</p>
                   <p className="text-lg font-bold tracking-wider">{result.kode_transaksi}</p>
                 </div>
-                <div className="flex justify-center bg-white rounded-lg p-3 mt-2" ref={barcodeRef}>
-                  <Barcode
-                    value={result.barcode || result.kode_transaksi}
-                    width={1.5}
-                    height={50}
-                    fontSize={12}
-                    margin={5}
-                    displayValue={true}
-                  />
+                <div className="flex justify-center bg-white rounded-xl p-3" ref={barcodeRef}>
+                  <Barcode value={result.barcode || result.kode_transaksi} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
                 </div>
               </div>
 
-              <div className="mt-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-blue-200">Plat Nomor</span>
-                  <span className="font-bold">{result.kendaraan?.plat_nomor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-200">Jenis</span>
-                  <span>{result.kendaraan?.jenis_kendaraan}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-200">Area</span>
-                  <span>{result.area_parkir?.nama_area}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-200">Waktu Masuk</span>
-                  <span>{formatDate(result.waktu_masuk)}</span>
-                </div>
-                 <div className="flex justify-between">
-                   <span className="text-blue-200">Petugas</span>
-                   <span>{result.user?.nama_lengkap || result.user?.name}</span>
-                 </div>
+              <div className="mt-4 space-y-2.5 text-sm">
+                <div className="flex justify-between"><span className="text-blue-200">Plat Nomor</span><span className="font-bold">{result.kendaraan?.plat_nomor}</span></div>
+                <div className="flex justify-between"><span className="text-blue-200">Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
+                <div className="flex justify-between"><span className="text-blue-200">Area</span><span>{result.area_parkir?.nama_area}</span></div>
+                <div className="flex justify-between"><span className="text-blue-200">Waktu Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
+                <div className="flex justify-between"><span className="text-blue-200">Petugas</span><span>{result.user?.nama_lengkap || result.user?.name}</span></div>
               </div>
 
-              <button onClick={handlePrint} className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+              <button onClick={handlePrint} className="w-full mt-5 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/20">
                 <FiPrinter size={18} /> Cetak Kartu Parkir
               </button>
             </div>
 
             {/* Hidden print content */}
             <div ref={printRef} style={{ display: 'none' }}>
-              <div className="center">
-                <h2>SMARTPARK</h2>
-                <p>Sistem Parkir Modern</p>
-              </div>
+              <div className="center"><h2>SMARTPARK</h2><p>Sistem Parkir Modern</p></div>
               <div className="line"></div>
               <div className="center bold">KARTU PARKIR MASUK</div>
               <div className="line"></div>
@@ -236,13 +219,21 @@ export default function TransaksiMasuk() {
               <div className="row"><span>Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
               <div className="row"><span>Area</span><span>{result.area_parkir?.nama_area}</span></div>
               <div className="row"><span>Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
-               <div className="row"><span>Petugas</span><span>{result.user?.nama_lengkap || result.user?.name}</span></div>
+              <div className="row"><span>Petugas</span><span>{result.user?.nama_lengkap || result.user?.name}</span></div>
               <div className="line"></div>
-              <div className="center">
-                <p>Simpan kartu ini dengan baik</p>
-                <p>Kartu hilang dikenakan denda</p>
-              </div>
+              <div className="center"><p>Simpan kartu ini dengan baik</p><p>Kartu hilang dikenakan denda</p></div>
             </div>
+          </div>
+        )}
+
+        {/* Empty state when no result */}
+        {!result && (
+          <div className="card flex flex-col items-center justify-center text-center py-16">
+            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4">
+              <FiMapPin className="text-blue-400" size={28} />
+            </div>
+            <h3 className="font-semibold text-gray-800 mb-1">Kartu Parkir</h3>
+            <p className="text-sm text-gray-400 max-w-[240px]">Kartu parkir akan tampil di sini setelah proses kendaraan masuk</p>
           </div>
         )}
       </div>

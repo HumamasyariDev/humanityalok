@@ -45,77 +45,95 @@ export default function LogAktivitas() {
   const moduls = ['', 'Auth', 'User', 'Tarif Parkir', 'Area Parkir', 'Kendaraan', 'Transaksi']
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div></div>
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-[3px] border-blue-600 border-t-transparent mx-auto"></div>
+          <p className="text-sm text-gray-400 mt-4">Memuat data...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Log Aktivitas</h1>
-        <p className="text-gray-500 mt-1">Riwayat semua aktivitas pengguna sistem</p>
+        <p className="text-sm font-medium text-blue-600 mb-1">Administrasi</p>
+        <h1 className="page-title">Log Aktivitas</h1>
+        <p className="page-subtitle">Riwayat semua aktivitas pengguna sistem</p>
       </div>
 
-      <div className="flex flex-wrap gap-3">
-        <form onSubmit={handleSearch} className="flex gap-2 flex-1 min-w-[300px]">
-          <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari aktivitas..." className="input-field pl-10" />
-          </div>
-          <button type="submit" className="btn-primary">Cari</button>
-        </form>
-        <select value={modul} onChange={(e) => setModul(e.target.value)} className="input-field w-auto">
-          <option value="">Semua Modul</option>
-          {moduls.filter(Boolean).map(m => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
+      {/* Filters */}
+      <div className="card">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSearch} className="flex gap-3 flex-1">
+            <div className="relative flex-1">
+              <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari aktivitas..." className="input-field pl-11" />
+            </div>
+            <button type="submit" className="btn-primary">Cari</button>
+          </form>
+          <select value={modul} onChange={(e) => setModul(e.target.value)} className="input-field w-auto min-w-[160px]">
+            <option value="">Semua Modul</option>
+            {moduls.filter(Boolean).map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
+      {/* Table */}
       <div className="card p-0">
-        <div className="table-container">
+        <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="table-header">
-                <th className="px-4 py-3">Waktu</th>
-                <th className="px-4 py-3">User</th>
-                <th className="px-4 py-3">Aksi</th>
-                <th className="px-4 py-3">Modul</th>
-                <th className="px-4 py-3">Keterangan</th>
-                <th className="px-4 py-3">IP</th>
+                <th className="px-6 py-3.5">Waktu</th>
+                <th className="px-6 py-3.5">User</th>
+                <th className="px-6 py-3.5">Aksi</th>
+                <th className="px-6 py-3.5">Modul</th>
+                <th className="px-6 py-3.5">Keterangan</th>
+                <th className="px-6 py-3.5">IP</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-50">
               {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-xs text-gray-500">
-                    <div className="flex items-center gap-1">
-                      <FiClock size={12} />
+                <tr key={log.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4 text-xs text-gray-500">
+                    <div className="flex items-center gap-1.5">
+                      <FiClock size={12} className="text-gray-400" />
                       {new Date(log.created_at).toLocaleString('id-ID')}
                     </div>
                   </td>
-                   <td className="px-4 py-3 text-sm font-medium">{log.user?.nama_lengkap || log.user?.name || '-'}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${aksiColors[log.aksi] || 'bg-gray-100 text-gray-700'}`}>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{log.user?.nama_lengkap || log.user?.name || '-'}</td>
+                  <td className="px-6 py-4">
+                    <span className={`badge ${aksiColors[log.aksi] || 'bg-gray-100 text-gray-700'}`}>
                       {log.aksi}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{log.modul}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 max-w-xs truncate">{log.keterangan}</td>
-                  <td className="px-4 py-3 text-xs text-gray-400 font-mono">{log.ip_address}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{log.modul}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{log.keterangan}</td>
+                  <td className="px-6 py-4 text-xs text-gray-400 font-mono">{log.ip_address}</td>
                 </tr>
               ))}
               {logs.length === 0 && (
-                <tr><td colSpan="6" className="px-4 py-8 text-center text-gray-400">Tidak ada log aktivitas</td></tr>
+                <tr>
+                  <td colSpan="6" className="px-6 py-12 text-center text-gray-400">
+                    <FiActivity className="mx-auto mb-2" size={28} />
+                    <p className="text-sm">Tidak ada log aktivitas</p>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
         </div>
         {pagination.last_page > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
             <p className="text-sm text-gray-500">Halaman {pagination.current_page} dari {pagination.last_page}</p>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               {Array.from({ length: Math.min(pagination.last_page, 10) }, (_, i) => i + 1).map(page => (
-                <button key={page} onClick={() => fetchLogs(page)} className={`px-3 py-1 rounded-lg text-sm ${page === pagination.current_page ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>{page}</button>
+                <button key={page} onClick={() => fetchLogs(page)} className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === pagination.current_page ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/20' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}>{page}</button>
               ))}
             </div>
           </div>

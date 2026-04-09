@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import api from '../lib/api'
 import toast from 'react-hot-toast'
-import { FiSearch, FiCheck, FiPrinter, FiClock, FiDollarSign } from 'react-icons/fi'
+import { FiSearch, FiCheck, FiPrinter, FiClock, FiDollarSign, FiTruck } from 'react-icons/fi'
 import Barcode from 'react-barcode'
 
 export default function TransaksiKeluar() {
@@ -39,9 +39,7 @@ export default function TransaksiKeluar() {
     if (!transaksi) return
     setProcessing(true)
     try {
-      const res = await api.post(`/transaksi/${transaksi.id}/keluar`, {
-        metode_pembayaran: metode,
-      })
+      const res = await api.post(`/transaksi/${transaksi.id}/keluar`, { metode_pembayaran: metode })
       setResult(res.data.data)
       setTransaksi(null)
       toast.success('Kendaraan berhasil keluar!')
@@ -108,16 +106,18 @@ export default function TransaksiKeluar() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Kendaraan Keluar</h1>
-        <p className="text-gray-500 mt-1">Scan kartu parkir atau masukkan barcode</p>
+        <p className="text-sm font-medium text-blue-600 mb-1">Transaksi</p>
+        <h1 className="page-title">Kendaraan Keluar</h1>
+        <p className="page-subtitle">Scan kartu parkir atau masukkan kode barcode</p>
       </div>
 
       {/* Scan Form */}
       <div className="card">
         <form onSubmit={handleScan} className="flex gap-3">
           <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
             <input
               type="text"
               value={barcode}
@@ -127,8 +127,8 @@ export default function TransaksiKeluar() {
               autoFocus
             />
           </div>
-          <button type="submit" disabled={loading} className="btn-primary px-6">
-            {loading ? <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div> : 'Cari'}
+          <button type="submit" disabled={loading} className="btn-primary px-8">
+            {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div> : 'Cari'}
           </button>
         </form>
       </div>
@@ -137,39 +137,47 @@ export default function TransaksiKeluar() {
         {/* Vehicle Info */}
         {transaksi && (
           <div className="card">
-            <h3 className="text-lg font-semibold mb-4">Detail Kendaraan</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-500">Kode Transaksi</span>
-                <span className="font-bold">{transaksi.kode_transaksi}</span>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <FiTruck className="text-blue-600" size={18} />
               </div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-500">Plat Nomor</span>
-                <span className="font-bold text-blue-700 text-lg">{transaksi.kendaraan?.plat_nomor}</span>
+              <div>
+                <h3 className="font-bold text-gray-900">Detail Kendaraan</h3>
+                <p className="text-xs text-gray-400">Informasi kendaraan yang akan keluar</p>
               </div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-500">Jenis</span>
-                <span>{transaksi.kendaraan?.jenis_kendaraan}</span>
+            </div>
+            <div className="space-y-2.5">
+              <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
+                <span className="text-sm text-gray-500">Kode Transaksi</span>
+                <span className="text-sm font-bold font-mono">{transaksi.kode_transaksi}</span>
               </div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-500">Area</span>
-                <span>{transaksi.area_parkir?.nama_area}</span>
+              <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
+                <span className="text-sm text-gray-500">Plat Nomor</span>
+                <span className="text-sm font-bold text-blue-700">{transaksi.kendaraan?.plat_nomor}</span>
               </div>
-              <div className="flex justify-between p-3 bg-gray-50 rounded-lg">
-                <span className="text-gray-500">Waktu Masuk</span>
-                <span>{formatDate(transaksi.waktu_masuk)}</span>
+              <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
+                <span className="text-sm text-gray-500">Jenis</span>
+                <span className="text-sm">{transaksi.kendaraan?.jenis_kendaraan}</span>
               </div>
-              <div className="flex justify-between p-3 bg-blue-50 rounded-lg">
-                <span className="text-blue-600 flex items-center gap-1"><FiClock size={16} /> Durasi</span>
-                <span className="font-bold text-blue-700">{duration.jam} jam {duration.menit} menit</span>
+              <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
+                <span className="text-sm text-gray-500">Area</span>
+                <span className="text-sm">{transaksi.area_parkir?.nama_area}</span>
               </div>
-              <div className="flex justify-between p-3 bg-emerald-50 rounded-lg">
-                <span className="text-emerald-600 flex items-center gap-1"><FiDollarSign size={16} /> Estimasi Biaya</span>
-                <span className="font-bold text-emerald-700 text-lg">{formatRupiah(calcEstBiaya())}</span>
+              <div className="flex justify-between p-3.5 bg-gray-50 rounded-xl">
+                <span className="text-sm text-gray-500">Waktu Masuk</span>
+                <span className="text-sm">{formatDate(transaksi.waktu_masuk)}</span>
+              </div>
+              <div className="flex justify-between p-3.5 bg-blue-50 rounded-xl">
+                <span className="text-sm text-blue-600 flex items-center gap-1.5"><FiClock size={14} /> Durasi</span>
+                <span className="text-sm font-bold text-blue-700">{duration.jam} jam {duration.menit} menit</span>
+              </div>
+              <div className="flex justify-between p-3.5 bg-emerald-50 rounded-xl">
+                <span className="text-sm text-emerald-600 flex items-center gap-1.5"><FiDollarSign size={14} /> Estimasi Biaya</span>
+                <span className="text-sm font-bold text-emerald-700 text-lg">{formatRupiah(calcEstBiaya())}</span>
               </div>
 
               {/* Payment Method */}
-              <div className="pt-2">
+              <div className="pt-3">
                 <label className="label-field">Metode Pembayaran</label>
                 <div className="grid grid-cols-3 gap-2">
                   {['tunai', 'kartu', 'e-wallet'].map((m) => (
@@ -179,7 +187,7 @@ export default function TransaksiKeluar() {
                       onClick={() => setMetode(m)}
                       className={`p-3 rounded-xl border-2 text-sm font-medium transition-all capitalize ${
                         metode === m
-                          ? 'border-blue-500 bg-blue-50 text-blue-700'
+                          ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-sm shadow-blue-500/10'
                           : 'border-gray-200 hover:border-gray-300 text-gray-600'
                       }`}
                     >
@@ -195,7 +203,7 @@ export default function TransaksiKeluar() {
                 className="w-full btn-success justify-center py-3 text-base mt-2"
               >
                 {processing ? (
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
                 ) : (
                   <><FiCheck size={18} /> Proses Keluar & Bayar</>
                 )}
@@ -207,77 +215,43 @@ export default function TransaksiKeluar() {
         {/* Receipt Result */}
         {result && (
           <div>
-            <div className="card bg-gradient-to-br from-emerald-600 to-teal-700 text-white">
+            <div className="bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 rounded-2xl p-6 text-white shadow-xl shadow-emerald-600/20">
               <div className="text-center mb-4">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-2">
+                <div className="w-12 h-12 bg-white/15 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto mb-3 border border-white/20">
                   <FiCheck size={24} />
                 </div>
                 <h3 className="text-xl font-bold">STRUK PARKIR</h3>
                 <p className="text-emerald-200 text-sm">Pembayaran Berhasil</p>
               </div>
 
-              <div className="bg-white/10 rounded-xl p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Kode</span>
-                  <span className="font-bold">{result.kode_transaksi}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Plat Nomor</span>
-                  <span className="font-bold">{result.kendaraan?.plat_nomor}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Jenis</span>
-                  <span>{result.kendaraan?.jenis_kendaraan}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Area</span>
-                  <span>{result.area_parkir?.nama_area}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Masuk</span>
-                  <span>{formatDate(result.waktu_masuk)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Keluar</span>
-                  <span>{formatDate(result.waktu_keluar)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Durasi</span>
-                  <span>{Math.floor((result.durasi_menit || 0) / 60)} jam {(result.durasi_menit || 0) % 60} menit</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-emerald-200">Pembayaran</span>
-                  <span className="capitalize">{result.metode_pembayaran}</span>
-                </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 space-y-2 text-sm border border-white/10">
+                <div className="flex justify-between"><span className="text-emerald-200">Kode</span><span className="font-bold">{result.kode_transaksi}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Plat Nomor</span><span className="font-bold">{result.kendaraan?.plat_nomor}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Jenis</span><span>{result.kendaraan?.jenis_kendaraan}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Area</span><span>{result.area_parkir?.nama_area}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Masuk</span><span>{formatDate(result.waktu_masuk)}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Keluar</span><span>{formatDate(result.waktu_keluar)}</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Durasi</span><span>{Math.floor((result.durasi_menit || 0) / 60)} jam {(result.durasi_menit || 0) % 60} menit</span></div>
+                <div className="flex justify-between"><span className="text-emerald-200">Pembayaran</span><span className="capitalize">{result.metode_pembayaran}</span></div>
               </div>
 
-              <div className="flex justify-center bg-white rounded-lg p-3 mt-3" ref={barcodeRef}>
-                <Barcode
-                  value={result.barcode || result.kode_transaksi}
-                  width={1.5}
-                  height={50}
-                  fontSize={12}
-                  margin={5}
-                  displayValue={true}
-                />
+              <div className="flex justify-center bg-white rounded-xl p-3 mt-4" ref={barcodeRef}>
+                <Barcode value={result.barcode || result.kode_transaksi} width={1.5} height={50} fontSize={12} margin={5} displayValue={true} />
               </div>
 
-              <div className="text-center mt-4 p-4 bg-white/10 rounded-xl">
-                <p className="text-emerald-200 text-xs">TOTAL BIAYA</p>
-                <p className="text-3xl font-bold">{formatRupiah(result.total_biaya)}</p>
+              <div className="text-center mt-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/10">
+                <p className="text-emerald-200 text-xs uppercase tracking-wider">Total Biaya</p>
+                <p className="text-3xl font-bold mt-1">{formatRupiah(result.total_biaya)}</p>
               </div>
 
-              <button onClick={handlePrint} className="w-full mt-4 bg-white/20 hover:bg-white/30 text-white font-medium py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+              <button onClick={handlePrint} className="w-full mt-5 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white font-medium py-3 rounded-xl transition-all flex items-center justify-center gap-2 border border-white/20">
                 <FiPrinter size={18} /> Cetak Struk
               </button>
             </div>
 
             {/* Hidden print content */}
             <div ref={printRef} style={{ display: 'none' }}>
-              <div className="center">
-                <h2>SMARTPARK</h2>
-                <p>Sistem Parkir Modern</p>
-              </div>
+              <div className="center"><h2>SMARTPARK</h2><p>Sistem Parkir Modern</p></div>
               <div className="line"></div>
               <div className="center bold">STRUK PEMBAYARAN PARKIR</div>
               <div className="line"></div>
@@ -294,11 +268,19 @@ export default function TransaksiKeluar() {
               <div className="line"></div>
               <div className="total">{formatRupiah(result.total_biaya)}</div>
               <div className="line"></div>
-              <div className="center">
-                <p>Terima kasih telah menggunakan</p>
-                <p>layanan SmartPark</p>
-              </div>
+              <div className="center"><p>Terima kasih telah menggunakan</p><p>layanan SmartPark</p></div>
             </div>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!transaksi && !result && (
+          <div className="card flex flex-col items-center justify-center text-center py-16">
+            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center mb-4">
+              <FiSearch className="text-emerald-400" size={28} />
+            </div>
+            <h3 className="font-semibold text-gray-800 mb-1">Scan Barcode</h3>
+            <p className="text-sm text-gray-400 max-w-[240px]">Scan atau masukkan kode barcode untuk memproses kendaraan keluar</p>
           </div>
         )}
       </div>
